@@ -2,10 +2,14 @@ package mission;
 
 import java.util.HashSet;
 
+import core.GeneralSearch;
+import core.Node;
+import core.Problem;
+import core.Strategy;
 import data.Location;
 import data.Soldier;
 
-public class MissionImpossible {
+public class MissionImpossible extends GeneralSearch {
 	static StringBuilder grid;
 	static final int minGridRange = 5;
 	static final int maxGridRange = 15;
@@ -22,7 +26,7 @@ public class MissionImpossible {
 		return (int) (Math.random() * max);
 	}
 
-	static void genGrid() {
+	static String genGrid() {
 		StringBuilder health = new StringBuilder();
 		grid = new StringBuilder();
 		int m = generateNumberWithinRange(minGridRange, maxGridRange);
@@ -67,8 +71,7 @@ public class MissionImpossible {
 				health.append(",");
 		}
 		grid.append(";").append(health.toString()).append(";").append(c);
-		System.out.println(grid.toString());
-		solve(grid.toString(), "", true);
+		return grid.toString();
 	}
 
 	public static void append(int x, int y) {
@@ -81,52 +84,49 @@ public class MissionImpossible {
 			grid.append(",");
 	}
 
-	public static void main(String[] args) {
-		genGrid();
-	}
-
-	static String solve(String grid, String stratigy, boolean visualize) {
-		parse(grid);
+	static String solve(String grid, Strategy strategy, boolean visualize) {
+		Problem missionImpossibleProblem = parse(grid);
+		Node goalNode = search(missionImpossibleProblem, strategy);
+		System.out.println(goalNode);
 		String plan = ";";
 		String death = ";";
 		String health = ";";
 		String node = ";";
-
 		return plan + death + health + node;
 	}
 
-	private static void parse(String grid) {
+	private static Problem parse(String grid) {
 		String[] splitter = grid.split(";");
 
 		String[] gridSize = splitter[0].split(",");
 
 		int m = Integer.parseInt(gridSize[0]);
 		int n = Integer.parseInt(gridSize[1]);
-		System.out.println("m: " + m + " n: " + n);
 
-		String[] ethanLocation = splitter[1].split(",");
-		Location ethan = new Location(Integer.parseInt(ethanLocation[0]), Integer.parseInt(ethanLocation[1]));
-		System.out.println(ethan);
+		String[] ethan = splitter[1].split(",");
+		Location ethanLocation = new Location(Integer.parseInt(ethan[0]), Integer.parseInt(ethan[1]));
 
-		String[] submarineLocation = splitter[2].split(",");
-		Location submarine = new Location(Integer.parseInt(submarineLocation[0]),
-				Integer.parseInt(submarineLocation[1]));
-		System.out.println(submarine);
+		String[] submarine = splitter[2].split(",");
+		Location submarineLocation = new Location(Integer.parseInt(submarine[0]), Integer.parseInt(submarine[1]));
 
-		int numOfSoldiers = splitter[3].length();
-		Soldier[] soldiers = new Soldier[splitter[3].length()];
 		String[] soldierLocations = splitter[3].split(",");
 		String[] soldierHealths = splitter[4].split(",");
-		for (int i = 0; i < numOfSoldiers; i += 2) {
+		int numOfSoldiers = soldierLocations.length / 2;
+		Soldier[] soldiers = new Soldier[numOfSoldiers];
+		
+		for (int i = 0; i < 2 * numOfSoldiers; i += 2) {
 			Soldier soldier = new Soldier(
 					new Location(Integer.parseInt(soldierLocations[i]), Integer.parseInt(soldierLocations[i + 1])),
-					Integer.parseInt(soldierHealths[(i + 1) / 2]));
-			soldiers[(i+1)/2] = soldier;
+					Integer.parseInt(soldierHealths[i / 2]));
+			soldiers[i / 2] = soldier;
 		}
 		
-		System.out.println(soldiers.toString());
-		
 		int truckCapacity = Integer.parseInt(splitter[5]);
-		System.out.println("Truck Capacity: " + truckCapacity);
+
+		return new Problem(n, m, truckCapacity, ethanLocation, submarineLocation, soldiers);
+	}
+
+	public static void main(String[] args) {
+		solve(genGrid(), Strategy.BF, false);
 	}
 }

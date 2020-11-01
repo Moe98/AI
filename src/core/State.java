@@ -45,7 +45,7 @@ public class State {
 		code.append(location.getX()).append(",").append(location.getY());
 		code.append("#").append(truckLoad);
 		code.append("#").append(soldiersMap.getBitmap());
-		return code.hashCode();
+		return code.toString().hashCode();
 	}
 
 	@Override

@@ -37,5 +37,10 @@ public class SoldiersMap {
 	public void setBitmap(int bitmap) {
 		this.bitmap = bitmap;
 	}
+
+	@Override
+	public String toString() {
+		return "SoldiersMap [numOfSoldiers=" + numOfSoldiers + ", bitmap=" + Integer.toBinaryString(bitmap) + "]";
+	}
 	
 }
