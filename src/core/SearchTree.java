@@ -13,4 +13,16 @@ public abstract class SearchTree {
 	abstract Node pop();
 	
 	abstract boolean isEmpty();
+	
+	boolean isVisited(Node node) {
+		return visited.contains(node);
+	}
+	
+	static SearchTree makeTree(Strategy strategy) {
+		if(strategy == Strategy.DF)
+			return new SearchStack();
+		if(strategy == Strategy.BF)
+			return new SearchQueue();
+		return new SearchPriorityQueue();
+	}
 }
