@@ -17,6 +17,10 @@ public class SoldiersMap {
 	public void pickupSoldier(int soldierIdx) {
 		this.bitmap |= (1 << soldierIdx);
 	}
+	
+	public boolean isAllRescued() {
+		return this.bitmap == (1 << numOfSoldiers) - 1;
+	}
 
 	public int getNumOfSoldiers() {
 		return numOfSoldiers;
