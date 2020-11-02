@@ -1,6 +1,7 @@
 package core;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import data.Location;
 import data.Soldier;
@@ -68,6 +69,13 @@ public class Problem {
 		}
 
 		return children;
+	}
+
+	@Override
+	public String toString() {
+		return "Problem [n=" + n + ", m=" + m + ", c=" + c + ", initialState=" + initialState + ", ethanLocation="
+				+ ethanLocation + ", submarineLocation=" + submarineLocation + ", soldiers=" + Arrays.toString(soldiers)
+				+ "]";
 	}
 
 	public int getN() {
