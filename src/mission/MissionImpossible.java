@@ -1,7 +1,7 @@
 package mission;
 
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Stack;
 
@@ -10,9 +10,9 @@ import core.GeneralSearch;
 import core.Node;
 import core.Problem;
 import core.Strategy;
+import core.Usage;
 import data.Location;
 import data.Soldier;
-import javafx.util.Pair;
 
 public class MissionImpossible extends GeneralSearch {
 	static StringBuilder grid;
@@ -90,10 +90,12 @@ public class MissionImpossible extends GeneralSearch {
 	}
 
 	static String solve(String grid, Strategy strategy, boolean visualize) {
+		StringBuilder solution = new StringBuilder();
+
 		Problem missionImpossibleProblem = parse(grid);
 		Node goalNode = search(missionImpossibleProblem, strategy);
 		Node head = goalNode;
-		ArrayList list = new ArrayList<>();
+		ArrayList<Action> list = new ArrayList<>();
 		Stack<Action> stack = new Stack<Action>();
 		while (true) {
 			if (head == null)
@@ -102,51 +104,59 @@ public class MissionImpossible extends GeneralSearch {
 			stack.push(head.getAction());
 			head = head.getParent();
 		}
-		for (int i = list.size() - 2; i >= 0; i--)
-			System.out.println(list.get(i));
-		// System.out.println(missionImpossibleProblem);
 
-		if (visualize) {
-			int n = missionImpossibleProblem.getN();
-			int m = missionImpossibleProblem.getM();
-			Location ethanLocation = missionImpossibleProblem.getEthanLocation();
-			Location submarineLocation = missionImpossibleProblem.getSubmarineLocation();
-			Soldier[] soldiers = missionImpossibleProblem.getSoldiers();
-			HashSet<Pair> set = new HashSet<Pair>();
+		int n = missionImpossibleProblem.getN();
+		int m = missionImpossibleProblem.getM();
+		Location ethanLocation = missionImpossibleProblem.getEthanLocation();
+		Location submarineLocation = missionImpossibleProblem.getSubmarineLocation();
+		Soldier[] soldiers = missionImpossibleProblem.getSoldiers();
+		HashSet<Location> set = new HashSet<Location>();
 
-			for (Soldier soldier : soldiers) {
-				set.add(new Pair(soldier.getLocation().getX(), soldier.getLocation().getY()));
-			}
+		for (Soldier soldier : soldiers) {
+			set.add(soldier.getLocation());
+		}
 
-			int count = 0;
-			for (int i = list.size() - 1; i >= 0; i--) {
-				if (list.get(i) == null) {
+		int count = 0;
+		int soldierHealths[] = new int[soldiers.length];
+		int deathCount = 0;
 
-				} else if (list.get(i) == Action.DROP)
-					count = 0;
-				else if (list.get(i) == Action.PICK) {
-					count += 1;
-					set.remove(new Pair(ethanLocation.getX(), ethanLocation.getY()));
-				}
+		for (int i = list.size() - 1; i >= 0; i--) {
+			if (list.get(i) == null) {
 
-				if (list.get(i) != null) {
-					switch ((Action) list.get(i)) {
-					case RIGHT:
-						ethanLocation.setY(ethanLocation.getY() + 1);
-						break;
-					case LEFT:
-						ethanLocation.setY(ethanLocation.getY() - 1);
-						break;
-					case DOWN:
-						ethanLocation.setX(ethanLocation.getX() + 1);
-						break;
-					case UP:
-						ethanLocation.setX(ethanLocation.getX() - 1);
-						break;
-					default:
-						break;
+			} else if (list.get(i) == Action.DROP)
+				count = 0;
+			else if (list.get(i) == Action.PICK) {
+				count += 1;
+				set.remove(ethanLocation);
+				// Check that it is - i not - i + 1.
+				for (int soldierIdx = 0; soldierIdx < soldiers.length; soldierIdx++) {
+					Soldier soldier = soldiers[soldierIdx];
+					if (soldier.getLocation().equals(ethanLocation)) {
+						soldierHealths[soldierIdx] = soldier.getInitalDamage() + 2 * (list.size() - 1 - i) - 2;
+						deathCount += soldierHealths[soldierIdx] >= 100 ? 1 : 0;
 					}
 				}
+			}
+
+			if (list.get(i) != null) {
+				switch ((Action) list.get(i)) {
+				case RIGHT:
+					ethanLocation.setY(ethanLocation.getY() + 1);
+					break;
+				case LEFT:
+					ethanLocation.setY(ethanLocation.getY() - 1);
+					break;
+				case DOWN:
+					ethanLocation.setX(ethanLocation.getX() + 1);
+					break;
+				case UP:
+					ethanLocation.setX(ethanLocation.getX() - 1);
+					break;
+				default:
+					break;
+				}
+			}
+			if (visualize) {
 				for (int c = 0; c < m; c++) {
 					for (int r = 0; r < n; r++) {
 						Location tempLocation = new Location(c, r);
@@ -154,7 +164,7 @@ public class MissionImpossible extends GeneralSearch {
 							System.out.print("E ");
 						} else if (tempLocation.equals(submarineLocation)) {
 							System.out.print("S ");
-						} else if (set.contains(new Pair(tempLocation.getX(), tempLocation.getY()))) {
+						} else if (set.contains(tempLocation)) {
 							System.out.print("M ");
 						} else {
 							System.out.print(". ");
@@ -164,14 +174,25 @@ public class MissionImpossible extends GeneralSearch {
 				}
 				System.out.println("Truck Capacity: " + count);
 				System.out.println();
-
 			}
 		}
-		String plan = ";";
-		String death = ";";
-		String health = ";";
-		String node = ";";
-		return plan + death + health + node;
+
+		for (int i = list.size() - 2; i >= 0; i--)
+			solution.append(list.get(i)).append(i == 0 ? "" : ",");
+		solution.substring(0, solution.length() - 1);
+		solution.append(";");
+		solution.append('\n');
+		solution.append(deathCount).append(";");
+		for (int i = 0; i < soldierHealths.length; i++)
+			solution.append(Math.min(100, soldierHealths[i])).append(i == soldierHealths.length - 1 ? "" : ",");
+		solution.substring(0, solution.length() - 1);
+		solution.append(";");
+		// ###########################REPLACE WITH ACTUAL
+		// EXPANDED###########################
+		solution.append(list.size() - 1);
+		// ###########################REPLACE WITH ACTUAL
+		// EXPANDED###########################
+		return solution.toString();
 	}
 
 	private static Problem parse(String grid) {
@@ -208,8 +229,20 @@ public class MissionImpossible extends GeneralSearch {
 	public static void main(String[] args) {
 		// String grid =
 		// "13,9;4,6;5,7;3,10,4,4,5,9,6,1,8,8,2,12,7,0;34,39,95,64,3,16,88;1";
-		String grid = "2,2;0,0;1,1;0,1,1,0;1,96;2";
-		solve(grid, Strategy.BF, true);
+		try {
+			Usage usage = new Usage();
+			usage.startMeasure();
+			String grid = "2,2;0,0;1,1;0,1,1,0;1,96;2";
+			System.out.println(solve(grid, Strategy.BF, true));
+			usage.endMeasure();
+			usage.printResults();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+//		String grid = "2,2;0,0;1,1;0,1,1,0;1,96;2";
+//		System.out.println(solve(grid, Strategy.BF, true));
 		// solve(grid, Strategy.BF, false);
 	}
 }
