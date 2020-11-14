@@ -86,6 +86,7 @@ public class MissionImpossible extends GeneralSearch {
 
 	static String solve(String grid, Strategy strategy, boolean visualize) {
 		Problem missionImpossibleProblem = parse(grid);
+		System.out.println(missionImpossibleProblem);
 		Node goalNode = search(missionImpossibleProblem, strategy);
 		System.out.println(goalNode);
 		String plan = ";";
@@ -113,20 +114,24 @@ public class MissionImpossible extends GeneralSearch {
 		String[] soldierHealths = splitter[4].split(",");
 		int numOfSoldiers = soldierLocations.length / 2;
 		Soldier[] soldiers = new Soldier[numOfSoldiers];
-		
+
 		for (int i = 0; i < 2 * numOfSoldiers; i += 2) {
 			Soldier soldier = new Soldier(
 					new Location(Integer.parseInt(soldierLocations[i]), Integer.parseInt(soldierLocations[i + 1])),
 					Integer.parseInt(soldierHealths[i / 2]));
 			soldiers[i / 2] = soldier;
 		}
-		
+
 		int truckCapacity = Integer.parseInt(splitter[5]);
 
 		return new Problem(n, m, truckCapacity, ethanLocation, submarineLocation, soldiers);
 	}
 
 	public static void main(String[] args) {
+		// String grid =
+		// "13,9;4,6;5,7;3,10,4,4,5,9,6,1,8,8,2,12,7,0;34,39,95,64,3,16,88;1";
+		// String grid = "2,2;0,0;1,1;0,1,1,0;1,96;2";
 		solve(genGrid(), Strategy.BF, false);
+		// solve(grid, Strategy.BF, false);
 	}
 }
