@@ -1,6 +1,8 @@
-package core;
+package core.search;
 
 import java.util.Stack;
+
+import core.Node;
 
 @SuppressWarnings("unchecked")
 public class SearchStack extends SearchTree {
@@ -11,18 +13,18 @@ public class SearchStack extends SearchTree {
 	}
 
 	@Override
-	void push(Node node) {
+	public void push(Node node) {
 		super.push(node);
 		((Stack<Node>)this.tree).push(node);
 	}
 
 	@Override
-	Node pop() {
+	public Node pop() {
 		return ((Stack<Node>)this.tree).pop();
 	}
 
 	@Override
-	boolean isEmpty() {
+	public boolean isEmpty() {
 		return ((Stack<Node>)this.tree).isEmpty();
 	}
 

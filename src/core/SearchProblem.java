@@ -1,35 +1,35 @@
 package core;
 
 public abstract class SearchProblem {
-	private GeneralState initialState;
-	private Operator [] operators;
+	private State initialState;
+	private String[] operators;
 
-	public SearchProblem(GeneralState initialState, Operator[] operators) {
+	public SearchProblem(State initialState, String[] operators) {
 		super();
 		this.initialState = initialState;
 		this.operators = operators;
 	}
 	
-	public abstract boolean goalTest(GeneralState state);
+	public abstract boolean goalTest(State state);
 	
-	public abstract int pathCost();
+	public abstract int pathCost(Node node);
 	
 	//state space represented as transition function
-	public abstract GeneralState transition(GeneralState currentGeneralState, Operator action);
-
-	public GeneralState getInitialGeneralState() {
+	public abstract State transition(State state, String operator);
+	
+	public State getInitialState() {
 		return initialState;
 	}
 
-	public void setInitialGeneralState(GeneralState initialState) {
+	public void setInitialState(State initialState) {
 		this.initialState = initialState;
 	}
 
-	public Operator[] getOperators() {
+	public String[] getOperators() {
 		return operators;
 	}
 
-	public void setOperators(Operator[] operators) {
+	public void setOperators(String[] operators) {
 		this.operators = operators;
 	}
 

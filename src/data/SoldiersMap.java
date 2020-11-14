@@ -9,6 +9,11 @@ public class SoldiersMap {
 		this.numOfSoldiers = numOfSoldiers;
 		this.bitmap = 0;
 	}
+	
+	public SoldiersMap(int numOfSoldiers, int bitmap) {
+		this.numOfSoldiers = numOfSoldiers;
+		this.bitmap = bitmap;
+	}
 
 	public boolean isSoldierRescued(int soldierIdx) {
 		return (this.bitmap & (1 << soldierIdx)) != 0;

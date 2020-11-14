@@ -2,10 +2,10 @@ package mission;
 
 import java.util.HashSet;
 
-import core.GeneralSearch;
 import core.Node;
 import core.Problem;
 import core.Strategy;
+import core.search.GeneralSearch;
 import data.Location;
 import data.Soldier;
 
@@ -124,14 +124,16 @@ public class MissionImpossible extends GeneralSearch {
 
 		int truckCapacity = Integer.parseInt(splitter[5]);
 
-		return new Problem(n, m, truckCapacity, ethanLocation, submarineLocation, soldiers);
+		String[] operators = { "UP", "DOWN", "LEFT", "RIGHT", "DROP", "PICK" };
+		
+		return new Problem(n, m, truckCapacity, ethanLocation, submarineLocation, soldiers, operators);
 	}
 
 	public static void main(String[] args) {
-		// String grid =
-		// "13,9;4,6;5,7;3,10,4,4,5,9,6,1,8,8,2,12,7,0;34,39,95,64,3,16,88;1";
-		// String grid = "2,2;0,0;1,1;0,1,1,0;1,96;2";
-		solve(genGrid(), Strategy.BF, false);
-		// solve(grid, Strategy.BF, false);
+//		 String grid =
+//		 "13,9;4,6;5,7;3,10,4,4,5,9,6,1,8,8,2,12,7,0;34,39,95,64,3,16,88;1";
+//		 String grid = "2,2;0,0;1,1;0,1,1,0;1,96;1";
+		solve(genGrid(), Strategy.UC, false);
+//		 solve(grid, Strategy.BF, false);
 	}
 }

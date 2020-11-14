@@ -7,6 +7,7 @@ import javax.management.MBeanServerConnection;
 import com.sun.management.OperatingSystemMXBean;
 
 public class CpuUsage {
+
 	
 	public static void main(String[] args) throws IOException {
 		MBeanServerConnection mbsc = ManagementFactory.getPlatformMBeanServer();

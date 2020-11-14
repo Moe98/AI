@@ -1,6 +1,8 @@
-package core;
+package core.search;
 
 import java.util.LinkedList;
+
+import core.Node;
 
 @SuppressWarnings("unchecked")
 public class SearchQueue extends SearchTree {
@@ -11,18 +13,18 @@ public class SearchQueue extends SearchTree {
 	}
 
 	@Override
-	void push(Node node) {
+	public void push(Node node) {
 		super.push(node);
 		((LinkedList<Node>)this.tree).push(node);
 	}
 
 	@Override
-	Node pop() {
+	public Node pop() {
 		return ((LinkedList<Node>)this.tree).pop();
 	}
 
 	@Override
-	boolean isEmpty() {
+	public boolean isEmpty() {
 		return ((LinkedList<Node>)this.tree).isEmpty();
 	}
 
