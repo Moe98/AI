@@ -9,10 +9,6 @@ public class GeneralSearch {
 		tree.push(new Node(null, problem.getInitialState(), null, 0, 0));
 		while(!tree.isEmpty()) {
 			Node current = tree.pop();
-			//System.err.print(current.getState());
-			//System.err.print(" ");
-			//System.err.print(tree.visited.size());
-			//System.err.println(" ");
 			if(problem.goalTest(current)) return current;
 			ArrayList<Node> children = problem.expand(current);
 			for(Node node : children)
