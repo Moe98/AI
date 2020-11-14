@@ -29,13 +29,15 @@ public class MissionImpossible extends Problem {
 		this.submarineLocation = submarineLocation;
 		this.soldiers = soldiers;
 	}
-
+	
+	@Override
 	public boolean goalTest(State state) {
-		return state.getSoldiers().isAllRescued() && state.getTruckLoad() == 0
-				&& state.getLocation().equals(submarineLocation);
+		MIState miState = (MIState)state;
+		return miState.getSoldiers().isAllRescued() && miState.getTruckLoad() == 0
+				&& miState.getLocation().equals(submarineLocation);
 	}
 
-	public State stateAfterDrop(State state) {
+	public MIState stateAfterDrop(MIState state) {
 		Location location = state.getLocation();
 		int truckLoad = state.getTruckLoad();
 		SoldiersMap soldiersMap = state.getSoldiers();
@@ -43,10 +45,10 @@ public class MissionImpossible extends Problem {
 		SoldiersMap newSoldiers = new SoldiersMap(soldiersMap.getNumOfSoldiers(), soldiersMap.getBitmap());
 		if (location.equals(submarineLocation) && truckLoad > 0)
 			truckLoad = 0;
-		return new State(Location.getNewLocation(location, "DROP"), truckLoad, newSoldiers);
+		return new MIState(Location.getNewLocation(location, "DROP"), truckLoad, newSoldiers);
 	}
 
-	public State stateAfterPick(State state) {
+	public MIState stateAfterPick(MIState state) {
 		Location location = state.getLocation();
 		int truckLoad = state.getTruckLoad();
 		SoldiersMap soldiersMap = state.getSoldiers();
@@ -61,13 +63,15 @@ public class MissionImpossible extends Problem {
 			newSoldiersMap.pickupSoldier(soldierIdx);
 		}
 
-		return new State(Location.getNewLocation(location, "PICK"), newTruckLoad, newSoldiersMap);
+		return new MIState(Location.getNewLocation(location, "PICK"), newTruckLoad, newSoldiersMap);
 	}
 
 	public State transition(State state, String operator) {
-		Location location = state.getLocation();
-		int truckLoad = state.getTruckLoad();
-		SoldiersMap soldiers = state.getSoldiers();
+		MIState miState = (MIState) state;
+		
+		Location location = miState.getLocation();
+		int truckLoad = miState.getTruckLoad();
+		SoldiersMap soldiers = miState.getSoldiers();
 
 		Location newLocation;
 
@@ -76,26 +80,26 @@ public class MissionImpossible extends Problem {
 			newLocation = Location.getNewLocation(location, "UP");
 			if (!Location.locationInBounds(newLocation, n, m))
 				newLocation = Location.getNewLocation(location, "DOWN");
-			return new State(newLocation, truckLoad, soldiers);
+			return new MIState(newLocation, truckLoad, soldiers);
 		case "DOWN":
 			newLocation = Location.getNewLocation(location, "DOWN");
 			if (!Location.locationInBounds(newLocation, n, m))
 				newLocation = Location.getNewLocation(location, "UP");
-			return new State(newLocation, truckLoad, soldiers);
+			return new MIState(newLocation, truckLoad, soldiers);
 		case "LEFT":
 			newLocation = Location.getNewLocation(location, "LEFT");
 			if (!Location.locationInBounds(newLocation, n, m))
 				newLocation = Location.getNewLocation(location, "RIGHT");
-			return new State(newLocation, truckLoad, soldiers);
+			return new MIState(newLocation, truckLoad, soldiers);
 		case "RIGHT":
 			newLocation = Location.getNewLocation(location, "RIGHT");
 			if (!Location.locationInBounds(newLocation, n, m))
 				newLocation = Location.getNewLocation(location, "LEFT");
-			return new State(newLocation, truckLoad, soldiers);
+			return new MIState(newLocation, truckLoad, soldiers);
 		case "DROP":
-			return stateAfterDrop(state);
+			return stateAfterDrop(miState);
 		default:
-			return stateAfterPick(state);
+			return stateAfterPick(miState);
 		}
 	}
 
@@ -103,7 +107,7 @@ public class MissionImpossible extends Problem {
 		if (node.getOperator().toString() != "PICK")
 			return 0;
 
-		int soldierIdx = getSoldierIndexAtLocation(node.getState().getLocation());
+		int soldierIdx = getSoldierIndexAtLocation(((MIState)node.getState()).getLocation());
 
 		int cost = node.getPathCost();
 		int soldierHealth = 100 - soldiers[soldierIdx].getInitalDamage();
@@ -125,13 +129,6 @@ public class MissionImpossible extends Problem {
 		return soldierIdx;
 	}
 
-	@Override
-	public String toString() {
-		return "Problem [n=" + n + ", m=" + m + ", c=" + c + ", initialState=" + initialState + ", operators="
-				+ Arrays.toString(operators) + ", ethanLocation=" + ethanLocation + ", submarineLocation="
-				+ submarineLocation + ", soldiers=" + Arrays.toString(soldiers) + "]";
-	}
-
 	static String genGrid() {
 		return MapGenerator.generate();
 	}
@@ -147,12 +144,11 @@ public class MissionImpossible extends Problem {
 		String node = ";";
 		return plan + death + health + node;
 	}
-
-	public static void main(String[] args) {
-//		 String grid =
-//		 "13,9;4,6;5,7;3,10,4,4,5,9,6,1,8,8,2,12,7,0;34,39,95,64,3,16,88;1";
-//		 String grid = "2,2;0,0;1,1;0,1,1,0;1,96;1";
-		solve(genGrid(), Strategy.UC, false);
-//		 solve(grid, Strategy.BF, false);
+	
+	@Override
+	public String toString() {
+		return "Problem [n=" + n + ", m=" + m + ", c=" + c + ", initialState=" + initialState + ", operators="
+				+ Arrays.toString(operators) + ", ethanLocation=" + ethanLocation + ", submarineLocation="
+				+ submarineLocation + ", soldiers=" + Arrays.toString(soldiers) + "]";
 	}
 }
