@@ -9,14 +9,14 @@ public abstract class Problem {
 		this.operators = operators;
 		this.initialState = initialState;
 	}
-	
+
 	public abstract boolean goalTest(State state);
-	
+
 	public abstract int pathCost(Node node);
-	
-	//state space represented as transition function
+
+	// state space represented as transition function
 	public abstract State transition(State state, String operator);
-	
+
 	public State getInitialState() {
 		return initialState;
 	}

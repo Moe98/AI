@@ -9,7 +9,7 @@ public class SoldiersMap {
 		this.numOfSoldiers = numOfSoldiers;
 		this.bitmap = 0;
 	}
-	
+
 	public SoldiersMap(int numOfSoldiers, int bitmap) {
 		this.numOfSoldiers = numOfSoldiers;
 		this.bitmap = bitmap;
@@ -44,13 +44,13 @@ public class SoldiersMap {
 	}
 
 	@Override
-	public String toString() {
-		return "SoldiersMap [numOfSoldiers=" + numOfSoldiers + ", bitmap=" + Integer.toBinaryString(bitmap) + "]";
+	public boolean equals(Object obj) {
+		return numOfSoldiers == ((SoldiersMap) obj).getNumOfSoldiers() && bitmap == ((SoldiersMap) obj).getBitmap();
 	}
 
 	@Override
-	public boolean equals(Object obj) {
-		return numOfSoldiers == ((SoldiersMap) obj).getNumOfSoldiers() && bitmap == ((SoldiersMap) obj).getBitmap();
+	public String toString() {
+		return "SoldiersMap [numOfSoldiers=" + numOfSoldiers + ", bitmap=" + Integer.toBinaryString(bitmap) + "]";
 	}
 
 }

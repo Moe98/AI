@@ -11,16 +11,16 @@ import data.Location;
 import data.Soldier;
 import data.SoldiersMap;
 
-
 public class MissionImpossible extends Problem {
-	
+
 	private int n, m, c;
 	private State initialState;
 	private Location ethanLocation, submarineLocation;
 	private Soldier[] soldiers;
 	private String[] operators;
 
-	public MissionImpossible(String[] operators, State initialState, int n, int m, int c, Location ethanLocation, Location submarineLocation, Soldier[] soldiers) {
+	public MissionImpossible(String[] operators, State initialState, int n, int m, int c, Location ethanLocation,
+			Location submarineLocation, Soldier[] soldiers) {
 		super(operators, initialState);
 		this.n = n;
 		this.m = m;
@@ -132,7 +132,6 @@ public class MissionImpossible extends Problem {
 				+ submarineLocation + ", soldiers=" + Arrays.toString(soldiers) + "]";
 	}
 
-
 	static String genGrid() {
 		return MapGenerator.generate();
 	}
@@ -149,7 +148,6 @@ public class MissionImpossible extends Problem {
 		return plan + death + health + node;
 	}
 
-	
 	public static void main(String[] args) {
 //		 String grid =
 //		 "13,9;4,6;5,7;3,10,4,4,5,9,6,1,8,8,2,12,7,0;34,39,95,64,3,16,88;1";

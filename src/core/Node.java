@@ -1,11 +1,11 @@
 package core;
 
-public class Node implements Comparable<Node>{
+public class Node implements Comparable<Node> {
 	private Node parent;
 	private State state;
 	private String operator;
 	private int depth, pathCost;
-	
+
 	public Node(Node parent, State state, String operator, int depth, int pathCost) {
 		super();
 		this.parent = parent;
@@ -13,6 +13,11 @@ public class Node implements Comparable<Node>{
 		this.operator = operator;
 		this.depth = depth;
 		this.pathCost = pathCost;
+	}
+
+	@Override
+	public int compareTo(Node o) {
+		return pathCost - o.pathCost;
 	}
 
 	public Node getParent() {
@@ -57,12 +62,7 @@ public class Node implements Comparable<Node>{
 
 	@Override
 	public String toString() {
-		return "Node [parent=" + parent + ", state=" + state + ", operator=" + operator + ", depth=" + depth + ", pathCost="
-				+ pathCost + "]";
-	}
-
-	@Override
-	public int compareTo(Node o) {
-		return pathCost - o.pathCost;
+		return "Node [parent=" + parent + ", state=" + state + ", operator=" + operator + ", depth=" + depth
+				+ ", pathCost=" + pathCost + "]";
 	}
 }

@@ -81,7 +81,7 @@ public class MapGenerator {
 			grid.append(",");
 	}
 
-    public static MissionImpossible parse(String grid) {
+	public static MissionImpossible parse(String grid) {
 		String[] splitter = grid.split(";");
 
 		String[] gridSize = splitter[0].split(",");
@@ -110,10 +110,11 @@ public class MapGenerator {
 		int truckCapacity = Integer.parseInt(splitter[5]);
 
 		String[] operators = { "UP", "DOWN", "LEFT", "RIGHT", "DROP", "PICK" };
-		
+
 		State intialState = new State(ethanLocation, 0, new SoldiersMap(numOfSoldiers));
-		
-		return new MissionImpossible(operators, intialState, n, m, truckCapacity, ethanLocation, submarineLocation, soldiers);
+
+		return new MissionImpossible(operators, intialState, n, m, truckCapacity, ethanLocation, submarineLocation,
+				soldiers);
 	}
 
 }
