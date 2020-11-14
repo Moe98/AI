@@ -1,13 +1,18 @@
 package mission;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Stack;
 
+import core.Action;
 import core.GeneralSearch;
 import core.Node;
 import core.Problem;
 import core.Strategy;
 import data.Location;
 import data.Soldier;
+import javafx.util.Pair;
 
 public class MissionImpossible extends GeneralSearch {
 	static StringBuilder grid;
@@ -86,9 +91,82 @@ public class MissionImpossible extends GeneralSearch {
 
 	static String solve(String grid, Strategy strategy, boolean visualize) {
 		Problem missionImpossibleProblem = parse(grid);
-		System.out.println(missionImpossibleProblem);
 		Node goalNode = search(missionImpossibleProblem, strategy);
-		System.out.println(goalNode);
+		Node head = goalNode;
+		ArrayList list = new ArrayList<>();
+		Stack<Action> stack = new Stack<Action>();
+		while (true) {
+			if (head == null)
+				break;
+			list.add(head.getAction());
+			stack.push(head.getAction());
+			head = head.getParent();
+		}
+		for (int i = list.size() - 2; i >= 0; i--)
+			System.out.println(list.get(i));
+		// System.out.println(missionImpossibleProblem);
+
+		if (visualize) {
+			int n = missionImpossibleProblem.getN();
+			int m = missionImpossibleProblem.getM();
+			Location ethanLocation = missionImpossibleProblem.getEthanLocation();
+			Location submarineLocation = missionImpossibleProblem.getSubmarineLocation();
+			Soldier[] soldiers = missionImpossibleProblem.getSoldiers();
+			HashSet<Pair> set = new HashSet<Pair>();
+
+			for (Soldier soldier : soldiers) {
+				set.add(new Pair(soldier.getLocation().getX(), soldier.getLocation().getY()));
+			}
+
+			int count = 0;
+			for (int i = list.size() - 1; i >= 0; i--) {
+				if (list.get(i) == null) {
+
+				} else if (list.get(i) == Action.DROP)
+					count = 0;
+				else if (list.get(i) == Action.PICK) {
+					count += 1;
+					set.remove(new Pair(ethanLocation.getX(), ethanLocation.getY()));
+				}
+
+				if (list.get(i) != null) {
+					switch ((Action) list.get(i)) {
+					case RIGHT:
+						ethanLocation.setY(ethanLocation.getY() + 1);
+						break;
+					case LEFT:
+						ethanLocation.setY(ethanLocation.getY() - 1);
+						break;
+					case DOWN:
+						ethanLocation.setX(ethanLocation.getX() + 1);
+						break;
+					case UP:
+						ethanLocation.setX(ethanLocation.getX() - 1);
+						break;
+					default:
+						break;
+					}
+				}
+				for (int c = 0; c < m; c++) {
+					for (int r = 0; r < n; r++) {
+						Location tempLocation = new Location(c, r);
+						if (tempLocation.equals(ethanLocation)) {
+							System.out.print("E ");
+						} else if (tempLocation.equals(submarineLocation)) {
+							System.out.print("S ");
+						} else if (set.contains(new Pair(tempLocation.getX(), tempLocation.getY()))) {
+							System.out.print("M ");
+						} else {
+							System.out.print(". ");
+						}
+					}
+					System.out.println();
+				}
+				System.out.println("Truck Capacity: " + count);
+				System.out.println();
+
+			}
+		}
 		String plan = ";";
 		String death = ";";
 		String health = ";";
@@ -130,8 +208,8 @@ public class MissionImpossible extends GeneralSearch {
 	public static void main(String[] args) {
 		// String grid =
 		// "13,9;4,6;5,7;3,10,4,4,5,9,6,1,8,8,2,12,7,0;34,39,95,64,3,16,88;1";
-		// String grid = "2,2;0,0;1,1;0,1,1,0;1,96;2";
-		solve(genGrid(), Strategy.BF, false);
+		String grid = "2,2;0,0;1,1;0,1,1,0;1,96;2";
+		solve(grid, Strategy.BF, true);
 		// solve(grid, Strategy.BF, false);
 	}
 }
