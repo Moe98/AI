@@ -1,6 +1,7 @@
 package core;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import data.Location;
 import data.Soldier;
@@ -12,10 +13,12 @@ public class Problem {
 	private Location ethanLocation, submarineLocation;
 	private Soldier[] soldiers;
 
-	public Problem(State initialState, Location ethanLocation, Location submarineLocation, Soldier[] soldiers) {
+	public Problem(int n, int m, int c, Location ethanLocation, Location submarineLocation, Soldier[] soldiers) {
 		super();
+		this.n = n;
+		this.m = m;
+		this.c = c;
 		this.initialState = new State(ethanLocation, 0, new SoldiersMap(soldiers.length));
-		this.initialState = initialState;
 		this.ethanLocation = ethanLocation;
 		this.submarineLocation = submarineLocation;
 		this.soldiers = soldiers;
@@ -37,12 +40,13 @@ public class Problem {
 		for (int i = 0; i < 4; i++) {
 			int x = nodeState.getLocation().getX() + dx[i];
 			int y = nodeState.getLocation().getY() + dy[i];
-			children.add(
-					new Node(node, new State(new Location(x, y), nodeState.getTruckLoad(), nodeState.getSoldiers()),
-							actions[i], node.getDepth() + 1, node.getPathCost()));
+			if (x >= 0 && x < n && y >= 0 && y < m)
+				children.add(
+						new Node(node, new State(new Location(x, y), nodeState.getTruckLoad(), nodeState.getSoldiers()),
+								actions[i], node.getDepth() + 1, node.getPathCost()));
 		}
 
-		if (submarineLocation.equals(nodeState.getLocation()))
+		if (submarineLocation.equals(nodeState.getLocation()) && nodeState.getTruckLoad() > 0)
 			children.add(new Node(node, new State(nodeState.getLocation(), 0, nodeState.getSoldiers()), Action.DROP,
 					node.getDepth() + 1, node.getPathCost()));
 
@@ -52,12 +56,12 @@ public class Problem {
 			if (soldier.getLocation().equals(nodeState.getLocation()))
 				soldierIdx = i;
 		}
-		if (soldierIdx != -1 && nodeState.getTruckLoad() < c) {
+		if (soldierIdx != -1 && nodeState.getTruckLoad() < c && !nodeState.getSoldiers().isSoldierRescued(soldierIdx)) {
 			State newState = new State(nodeState.getLocation(), nodeState.getTruckLoad() + 1, nodeState.getSoldiers());
 			newState.getSoldiers().pickupSoldier(soldierIdx);
 			int cost = node.getPathCost();
 			int soldierHealth = 100 - soldiers[soldierIdx].getInitalDamage();
-			if(soldierHealth <= node.getDepth() * 2)
+			if (soldierHealth <= node.getDepth() * 2)
 				cost += soldierHealth + 10000;
 			else
 				cost += node.getDepth() * 2;
@@ -65,6 +69,13 @@ public class Problem {
 		}
 
 		return children;
+	}
+
+	@Override
+	public String toString() {
+		return "Problem [n=" + n + ", m=" + m + ", c=" + c + ", initialState=" + initialState + ", ethanLocation="
+				+ ethanLocation + ", submarineLocation=" + submarineLocation + ", soldiers=" + Arrays.toString(soldiers)
+				+ "]";
 	}
 
 	public int getN() {

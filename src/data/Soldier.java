@@ -25,6 +25,10 @@ public class Soldier {
 	public void setInitalDamage(int initalDamage) {
 		this.initalDamage = initalDamage;
 	}
-	
+
+	@Override
+	public String toString() {
+		return "Soldier [location=" + location + ", initalDamage=" + initalDamage + "]";
+	}
 	
 }
