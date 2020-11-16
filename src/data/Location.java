@@ -11,6 +11,27 @@ public class Location {
 		this.y = y;
 	}
 
+	public static Location getNewLocation(Location oldLocation, String move) {
+		int x = oldLocation.getX();
+		int y = oldLocation.getY();
+		switch (move) {
+		case "UP":
+			return new Location(x - 1, y);
+		case "DOWN":
+			return new Location(x + 1, y);
+		case "LEFT":
+			return new Location(x, y - 1);
+		case "RIGHT":
+			return new Location(x, y + 1);
+		default:
+			return new Location(x, y);
+		}
+	}
+
+	public static boolean locationInBounds(Location location, int height, int width) {
+		return location.x >= 0 && location.x < height && location.y >= 0 && location.y < width;
+	}
+
 	public int getX() {
 		return x;
 	}
