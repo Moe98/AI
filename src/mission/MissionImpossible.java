@@ -1,137 +1,170 @@
 package mission;
 
-import java.util.HashSet;
+import java.util.Arrays;
 
-import core.GeneralSearch;
 import core.Node;
 import core.Problem;
+import core.State;
 import core.Strategy;
+import core.search.GeneralSearch;
 import data.Location;
 import data.Soldier;
+import data.SoldiersMap;
 
-public class MissionImpossible extends GeneralSearch {
-	static StringBuilder grid;
-	static final int minGridRange = 5;
-	static final int maxGridRange = 15;
-	static final int minSoldierCount = 1;
-	static final int maxSoldierCount = 10;
-	static final int minHealth = 1;
-	static final int maxHealth = 99;
+public class MissionImpossible extends Problem {
 
-	public static int generateNumberWithinRange(int min, int max) {
-		return (int) (Math.random() * (max - min + 1)) + min;
+	private int n, m, c;
+	private State initialState;
+	private Location ethanLocation, submarineLocation;
+	private Soldier[] soldiers;
+	private String[] operators;
+
+	public MissionImpossible(String[] operators, State initialState, int n, int m, int c, Location ethanLocation,
+			Location submarineLocation, Soldier[] soldiers) {
+		super(operators, initialState);
+		this.n = n;
+		this.m = m;
+		this.c = c;
+		this.ethanLocation = ethanLocation;
+		this.submarineLocation = submarineLocation;
+		this.soldiers = soldiers;
 	}
 
-	public static int generateNumber(int max) {
-		return (int) (Math.random() * max);
+	@Override
+	public boolean goalTest(State state) {
+		MIState miState = (MIState) state;
+		return miState.getSoldiers().isAllRescued() && miState.getTruckLoad() == 0
+				&& miState.getLocation().equals(submarineLocation);
+	}
+
+	public MIState stateAfterDrop(MIState state) {
+		Location location = state.getLocation();
+		int truckLoad = state.getTruckLoad();
+		SoldiersMap soldiersMap = state.getSoldiers();
+
+		SoldiersMap newSoldiers = new SoldiersMap(soldiersMap.getNumOfSoldiers(), soldiersMap.getBitmap());
+		if (location.equals(submarineLocation) && truckLoad > 0)
+			truckLoad = 0;
+		return new MIState(Location.getNewLocation(location, "DROP"), truckLoad, newSoldiers);
+	}
+
+	public MIState stateAfterPick(MIState state) {
+		Location location = state.getLocation();
+		int truckLoad = state.getTruckLoad();
+		SoldiersMap soldiersMap = state.getSoldiers();
+
+		int newTruckLoad = truckLoad;
+		SoldiersMap newSoldiersMap = new SoldiersMap(soldiersMap.getNumOfSoldiers(), soldiersMap.getBitmap());
+
+		int soldierIdx = getSoldierIndexAtLocation(location);
+
+		if (soldierIdx != -1 && truckLoad < c && !soldiersMap.isSoldierRescued(soldierIdx)) {
+			newTruckLoad++;
+			newSoldiersMap.pickupSoldier(soldierIdx);
+		}
+
+		return new MIState(Location.getNewLocation(location, "PICK"), newTruckLoad, newSoldiersMap);
+	}
+
+	public State transition(State state, String operator) {
+		MIState miState = (MIState) state;
+
+		Location location = miState.getLocation();
+		int truckLoad = miState.getTruckLoad();
+		SoldiersMap soldiers = miState.getSoldiers();
+
+		Location newLocation;
+
+		switch (operator) {
+		case "UP":
+			newLocation = Location.getNewLocation(location, "UP");
+			if (!Location.locationInBounds(newLocation, n, m))
+				newLocation = Location.getNewLocation(location, "DOWN");
+			return new MIState(newLocation, truckLoad, soldiers);
+		case "DOWN":
+			newLocation = Location.getNewLocation(location, "DOWN");
+			if (!Location.locationInBounds(newLocation, n, m))
+				newLocation = Location.getNewLocation(location, "UP");
+			return new MIState(newLocation, truckLoad, soldiers);
+		case "LEFT":
+			newLocation = Location.getNewLocation(location, "LEFT");
+			if (!Location.locationInBounds(newLocation, n, m))
+				newLocation = Location.getNewLocation(location, "RIGHT");
+			return new MIState(newLocation, truckLoad, soldiers);
+		case "RIGHT":
+			newLocation = Location.getNewLocation(location, "RIGHT");
+			if (!Location.locationInBounds(newLocation, n, m))
+				newLocation = Location.getNewLocation(location, "LEFT");
+			return new MIState(newLocation, truckLoad, soldiers);
+		case "DROP":
+			return stateAfterDrop(miState);
+		default:
+			return stateAfterPick(miState);
+		}
+	}
+
+	public int pathCost(Node node) {
+		if (node.getOperator().toString() != "PICK")
+			return 0;
+
+		int soldierIdx = getSoldierIndexAtLocation(((MIState) node.getState()).getLocation());
+
+		int cost = node.getPathCost();
+		int soldierHealth = 100 - soldiers[soldierIdx].getInitalDamage();
+		if (soldierHealth <= node.getDepth() * 2)
+			cost += soldierHealth + 10000;
+		else
+			cost += node.getDepth() * 2;
+
+		return cost;
+	}
+
+	public int getSoldierIndexAtLocation(Location location) {
+		int soldierIdx = -1;
+		for (int i = 0; i < soldiers.length && soldierIdx == -1; i++) {
+			Soldier soldier = soldiers[i];
+			if (soldier.getLocation().equals(location))
+				soldierIdx = i;
+		}
+		return soldierIdx;
 	}
 
 	static String genGrid() {
-		StringBuilder health = new StringBuilder();
-		grid = new StringBuilder();
-		int m = generateNumberWithinRange(minGridRange, maxGridRange);
-		int n = generateNumberWithinRange(minGridRange, maxGridRange);
-		HashSet<Integer> fullCells = new HashSet<Integer>();
-		Location ethen = new Location(generateNumber(n), generateNumber(m));
-		fullCells.add(ethen.getX() * m + ethen.getY());
-		Location submarine;
-		while (true) {
-			int x = generateNumber(n);
-			int y = generateNumber(m);
-			int unique = x * m + y;
-			if (!fullCells.contains(unique)) {
-				submarine = new Location(x, y);
-				fullCells.add(unique);
-				break;
-			}
-		}
-
-		int soldiers = generateNumberWithinRange(minSoldierCount, maxSoldierCount);
-		int c = generateNumberWithinRange(minSoldierCount, maxSoldierCount);
-		append(m, n);
-		append(ethen.getX(), ethen.getY());
-		append(submarine.getX(), submarine.getY());
-		Soldier s;
-		for (int i = 0; i < soldiers; i++) {
-			while (true) {
-				int x = generateNumber(n);
-				int y = generateNumber(m);
-				int unique = x * m + y;
-				if (!fullCells.contains(unique)) {
-					s = new Soldier(new Location(x, y), generateNumberWithinRange(minHealth, maxHealth));
-					fullCells.add(unique);
-					break;
-				}
-			}
-
-			fullCells.add(s.getLocation().getX() * m + s.getLocation().getY());
-			appendSoldier(s.getLocation().getX(), s.getLocation().getY(), i + 1 < soldiers);
-			health.append(s.getInitalDamage());
-			if (i + 1 < soldiers)
-				health.append(",");
-		}
-		grid.append(";").append(health.toString()).append(";").append(c);
-		return grid.toString();
-	}
-
-	public static void append(int x, int y) {
-		grid.append(x).append(",").append(y).append(";");
-	}
-
-	public static void appendSoldier(int x, int y, Boolean comma) {
-		grid.append(x).append(",").append(y);
-		if (comma)
-			grid.append(",");
+		return MapGenerator.generate();
 	}
 
 	static String solve(String grid, Strategy strategy, boolean visualize) {
-		Problem missionImpossibleProblem = parse(grid);
+		MissionImpossible missionImpossibleProblem = MapGenerator.parse(grid);
 		System.out.println(missionImpossibleProblem);
-		Node goalNode = search(missionImpossibleProblem, strategy);
-		System.out.println(goalNode);
-		String plan = ";";
-		String death = ";";
-		String health = ";";
-		String node = ";";
-		return plan + death + health + node;
+		Node goalNode = GeneralSearch.search(missionImpossibleProblem, strategy);
+		String solution = Visualizer.visualize(missionImpossibleProblem, goalNode, visualize);
+		return solution;
 	}
 
-	private static Problem parse(String grid) {
-		String[] splitter = grid.split(";");
-
-		String[] gridSize = splitter[0].split(",");
-
-		int m = Integer.parseInt(gridSize[0]);
-		int n = Integer.parseInt(gridSize[1]);
-
-		String[] ethan = splitter[1].split(",");
-		Location ethanLocation = new Location(Integer.parseInt(ethan[0]), Integer.parseInt(ethan[1]));
-
-		String[] submarine = splitter[2].split(",");
-		Location submarineLocation = new Location(Integer.parseInt(submarine[0]), Integer.parseInt(submarine[1]));
-
-		String[] soldierLocations = splitter[3].split(",");
-		String[] soldierHealths = splitter[4].split(",");
-		int numOfSoldiers = soldierLocations.length / 2;
-		Soldier[] soldiers = new Soldier[numOfSoldiers];
-
-		for (int i = 0; i < 2 * numOfSoldiers; i += 2) {
-			Soldier soldier = new Soldier(
-					new Location(Integer.parseInt(soldierLocations[i]), Integer.parseInt(soldierLocations[i + 1])),
-					Integer.parseInt(soldierHealths[i / 2]));
-			soldiers[i / 2] = soldier;
-		}
-
-		int truckCapacity = Integer.parseInt(splitter[5]);
-
-		return new Problem(n, m, truckCapacity, ethanLocation, submarineLocation, soldiers);
+	public int getN() {
+		return n;
 	}
 
-	public static void main(String[] args) {
-		// String grid =
-		// "13,9;4,6;5,7;3,10,4,4,5,9,6,1,8,8,2,12,7,0;34,39,95,64,3,16,88;1";
-		// String grid = "2,2;0,0;1,1;0,1,1,0;1,96;2";
-		solve(genGrid(), Strategy.BF, false);
-		// solve(grid, Strategy.BF, false);
+	public int getM() {
+		return m;
+	}
+
+	public Location getEthanLocation() {
+		return ethanLocation;
+	}
+
+	public Location getSubmarineLocation() {
+		return submarineLocation;
+	}
+
+	public Soldier[] getSoldiers() {
+		return soldiers;
+	}
+
+	@Override
+	public String toString() {
+		return "Problem [n=" + n + ", m=" + m + ", c=" + c + ", initialState=" + initialState + ", operators="
+				+ Arrays.toString(operators) + ", ethanLocation=" + ethanLocation + ", submarineLocation="
+				+ submarineLocation + ", soldiers=" + Arrays.toString(soldiers) + "]";
 	}
 }

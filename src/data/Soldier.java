@@ -3,7 +3,7 @@ package data;
 public class Soldier {
 	private Location location;
 	private int initalDamage;
-	
+
 	public Soldier(Location location, int initalDamage) {
 		super();
 		this.location = location;
@@ -13,15 +13,15 @@ public class Soldier {
 	public Location getLocation() {
 		return location;
 	}
-	
+
 	public void setLocation(Location location) {
 		this.location = location;
 	}
-	
+
 	public int getInitalDamage() {
 		return initalDamage;
 	}
-	
+
 	public void setInitalDamage(int initalDamage) {
 		this.initalDamage = initalDamage;
 	}
@@ -30,5 +30,5 @@ public class Soldier {
 	public String toString() {
 		return "Soldier [location=" + location + ", initalDamage=" + initalDamage + "]";
 	}
-	
+
 }

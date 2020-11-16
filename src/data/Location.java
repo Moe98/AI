@@ -1,5 +1,7 @@
 package data;
 
+import java.util.Objects;
+
 public class Location {
 	private int x, y;
 
@@ -7,6 +9,27 @@ public class Location {
 		super();
 		this.x = x;
 		this.y = y;
+	}
+
+	public static Location getNewLocation(Location oldLocation, String move) {
+		int x = oldLocation.getX();
+		int y = oldLocation.getY();
+		switch (move) {
+		case "UP":
+			return new Location(x - 1, y);
+		case "DOWN":
+			return new Location(x + 1, y);
+		case "LEFT":
+			return new Location(x, y - 1);
+		case "RIGHT":
+			return new Location(x, y + 1);
+		default:
+			return new Location(x, y);
+		}
+	}
+
+	public static boolean locationInBounds(Location location, int height, int width) {
+		return location.x >= 0 && location.x < height && location.y >= 0 && location.y < width;
 	}
 
 	public int getX() {
@@ -24,7 +47,12 @@ public class Location {
 	public void setY(int y) {
 		this.y = y;
 	}
-
+	
+	@Override
+	public int hashCode() {
+		return Objects.hash(this.x, this.y);
+	}
+	
 	@Override
 	public boolean equals(Object obj) {
 		Location location = (Location) obj;
