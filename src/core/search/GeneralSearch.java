@@ -8,6 +8,8 @@ import core.State;
 import core.Strategy;
 
 public class GeneralSearch {
+	
+	public static int totalExpanded;
 
 	public static ArrayList<Node> expand(Node currNode, Problem problem) {
 		State currentState = currNode.getState();
@@ -24,6 +26,7 @@ public class GeneralSearch {
 	}
 
 	public static Node search(Problem problem, Strategy strategy) {
+		totalExpanded = 0;
 		SearchTree tree = SearchTree.makeTree(strategy);
 		tree.push(new Node(null, problem.getInitialState(), null, 0, 0));
 		while (!tree.isEmpty()) {
@@ -31,6 +34,7 @@ public class GeneralSearch {
 			if (problem.goalTest(current.getState()))
 				return current;
 			ArrayList<Node> children = expand(current, problem);
+			totalExpanded++;
 			for (Node node : children)
 				if (!tree.isVisited(node))
 					tree.push(node);

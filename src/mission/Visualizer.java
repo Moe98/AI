@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Stack;
 
 import core.Node;
+import core.search.GeneralSearch;
 import data.Location;
 import data.Soldier;
 
@@ -55,7 +56,7 @@ public class Visualizer {
 
 			if (list.get(i) != null)
 				ethanLocation = Location.getNewLocation(ethanLocation, list.get(i));
-				
+
 			if (visualizeSolutionGrids) {
 				for (int c = 0; c < m; c++) {
 					for (int r = 0; r < n; r++) {
@@ -77,24 +78,20 @@ public class Visualizer {
 			}
 		}
 
+		// Plan.
 		for (int i = list.size() - 2; i >= 0; i--)
-			solution.append(list.get(i)).append(i == 0 ? "" : ","); // Plan.
-		solution.substring(0, solution.length() - 1);
-		solution.append(";");
-		solution.append('\n');
-		solution.append(deathCount).append(";"); // Death count.
+			solution.append(list.get(i)).append(i == 0 ? ";" : ","); 
+
+		// Death count.
+		solution.append(deathCount).append(";"); 
+
+		// Soldiers health at goal state.
 		for (int i = 0; i < soldierHealths.length; i++)
-			// Soldiers health at goal state.
-			solution.append(Math.min(100, soldierHealths[i])).append(i == soldierHealths.length - 1 ? "" : ",");
-		solution.substring(0, solution.length() - 1); // Expanded nodes.
-		solution.append(";");
-		
-		// ###########################REPLACE WITH ACTUAL
-		// EXPANDED###########################
-		solution.append(list.size() - 1);
-		// ###########################REPLACE WITH ACTUAL
-		// EXPANDED###########################
-		
+			solution.append(Math.min(100, soldierHealths[i])).append(i == soldierHealths.length - 1 ? ";" : ",");
+
+		// Expanded nodes.
+		solution.append(GeneralSearch.totalExpanded); 
+
 		return solution.toString();
 	}
 

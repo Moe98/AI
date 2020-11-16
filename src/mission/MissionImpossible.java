@@ -79,22 +79,22 @@ public class MissionImpossible extends Problem {
 		case "UP":
 			newLocation = Location.getNewLocation(location, "UP");
 			if (!Location.locationInBounds(newLocation, n, m))
-				newLocation = Location.getNewLocation(location, "DOWN");
+				newLocation = Location.getNewLocation(newLocation, "DOWN");
 			return new MIState(newLocation, truckLoad, soldiers);
 		case "DOWN":
 			newLocation = Location.getNewLocation(location, "DOWN");
 			if (!Location.locationInBounds(newLocation, n, m))
-				newLocation = Location.getNewLocation(location, "UP");
+				newLocation = Location.getNewLocation(newLocation, "UP");
 			return new MIState(newLocation, truckLoad, soldiers);
 		case "LEFT":
 			newLocation = Location.getNewLocation(location, "LEFT");
 			if (!Location.locationInBounds(newLocation, n, m))
-				newLocation = Location.getNewLocation(location, "RIGHT");
+				newLocation = Location.getNewLocation(newLocation, "RIGHT");
 			return new MIState(newLocation, truckLoad, soldiers);
 		case "RIGHT":
 			newLocation = Location.getNewLocation(location, "RIGHT");
 			if (!Location.locationInBounds(newLocation, n, m))
-				newLocation = Location.getNewLocation(location, "LEFT");
+				newLocation = Location.getNewLocation(newLocation, "LEFT");
 			return new MIState(newLocation, truckLoad, soldiers);
 		case "DROP":
 			return stateAfterDrop(miState);
@@ -137,8 +137,7 @@ public class MissionImpossible extends Problem {
 		MissionImpossible missionImpossibleProblem = MapGenerator.parse(grid);
 		System.out.println(missionImpossibleProblem);
 		Node goalNode = GeneralSearch.search(missionImpossibleProblem, strategy);
-		String solution = Visualizer.visualize(missionImpossibleProblem, goalNode, visualize);
-		return solution;
+		return Visualizer.visualize(missionImpossibleProblem, goalNode, visualize);
 	}
 
 	public int getN() {

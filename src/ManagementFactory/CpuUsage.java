@@ -20,11 +20,6 @@ public class CpuUsage {
 		long beforeUsedMem = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
 		long totalMem = Runtime.getRuntime().totalMemory();
 
-		// Call an expensive task, or sleep if you are monitoring a remote process
-		String s = "";
-		for (int i = 0; i < 100000; i++) {
-//			s+=" ";
-		}
 		long afterUsedMem = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
 		long actualMemUsed = afterUsedMem - beforeUsedMem;
 		double usage = ((actualMemUsed * 1.0) / (totalMem * 1.0)) * 100;

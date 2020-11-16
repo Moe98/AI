@@ -109,7 +109,7 @@ public class MapGenerator {
 
 		int truckCapacity = Integer.parseInt(splitter[5]);
 
-		String[] operators = { "UP", "DOWN", "LEFT", "RIGHT", "DROP", "PICK" };
+		String[] operators = { "UP", "DOWN",  "RIGHT", "LEFT", "DROP", "PICK" };
 		State intialState = new MIState(ethanLocation, 0, new SoldiersMap(numOfSoldiers));
 
 		return new MissionImpossible(operators, intialState, n, m, truckCapacity, ethanLocation, submarineLocation,
