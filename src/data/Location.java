@@ -1,5 +1,7 @@
 package data;
 
+import java.util.Objects;
+
 public class Location {
 	private int x, y;
 
@@ -45,7 +47,12 @@ public class Location {
 	public void setY(int y) {
 		this.y = y;
 	}
-
+	
+	@Override
+	public int hashCode() {
+		return Objects.hash(this.x, this.y);
+	}
+	
 	@Override
 	public boolean equals(Object obj) {
 		Location location = (Location) obj;

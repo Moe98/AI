@@ -8,9 +8,8 @@ public abstract class Problem {
 		super();
 		this.operators = operators;
 		this.initialState = initialState;
-	}
 
-	public abstract boolean goalTest(State state);
+  public abstract boolean goalTest(State state);
 
 	public abstract int pathCost(Node node);
 
