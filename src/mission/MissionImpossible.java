@@ -90,109 +90,9 @@ public class MissionImpossible extends GeneralSearch {
 	}
 
 	static String solve(String grid, Strategy strategy, boolean visualize) {
-		StringBuilder solution = new StringBuilder();
-
 		Problem missionImpossibleProblem = parse(grid);
 		Node goalNode = search(missionImpossibleProblem, strategy);
-		Node head = goalNode;
-		ArrayList<Action> list = new ArrayList<>();
-		Stack<Action> stack = new Stack<Action>();
-		while (true) {
-			if (head == null)
-				break;
-			list.add(head.getAction());
-			stack.push(head.getAction());
-			head = head.getParent();
-		}
-
-		int n = missionImpossibleProblem.getN();
-		int m = missionImpossibleProblem.getM();
-		Location ethanLocation = missionImpossibleProblem.getEthanLocation();
-		Location submarineLocation = missionImpossibleProblem.getSubmarineLocation();
-		Soldier[] soldiers = missionImpossibleProblem.getSoldiers();
-		HashSet<Location> set = new HashSet<Location>();
-
-		for (Soldier soldier : soldiers) {
-			set.add(soldier.getLocation());
-		}
-
-		int count = 0;
-		int soldierHealths[] = new int[soldiers.length];
-		int deathCount = 0;
-
-		for (int i = list.size() - 1; i >= 0; i--) {
-			if (list.get(i) == null) {
-
-			} else if (list.get(i) == Action.DROP)
-				count = 0;
-			else if (list.get(i) == Action.PICK) {
-				count += 1;
-				set.remove(ethanLocation);
-				// Check that it is - i not - i + 1.
-				for (int soldierIdx = 0; soldierIdx < soldiers.length; soldierIdx++) {
-					Soldier soldier = soldiers[soldierIdx];
-					if (soldier.getLocation().equals(ethanLocation)) {
-						soldierHealths[soldierIdx] = soldier.getInitalDamage() + 2 * (list.size() - 1 - i) - 2;
-						deathCount += soldierHealths[soldierIdx] >= 100 ? 1 : 0;
-					}
-				}
-			}
-
-			if (list.get(i) != null) {
-				switch ((Action) list.get(i)) {
-				case RIGHT:
-					ethanLocation.setY(ethanLocation.getY() + 1);
-					break;
-				case LEFT:
-					ethanLocation.setY(ethanLocation.getY() - 1);
-					break;
-				case DOWN:
-					ethanLocation.setX(ethanLocation.getX() + 1);
-					break;
-				case UP:
-					ethanLocation.setX(ethanLocation.getX() - 1);
-					break;
-				default:
-					break;
-				}
-			}
-			if (visualize) {
-				for (int c = 0; c < m; c++) {
-					for (int r = 0; r < n; r++) {
-						Location tempLocation = new Location(c, r);
-						if (tempLocation.equals(ethanLocation)) {
-							System.out.print("E ");
-						} else if (tempLocation.equals(submarineLocation)) {
-							System.out.print("S ");
-						} else if (set.contains(tempLocation)) {
-							System.out.print("M ");
-						} else {
-							System.out.print(". ");
-						}
-					}
-					System.out.println();
-				}
-				System.out.println("Truck Capacity: " + count);
-				System.out.println();
-			}
-		}
-
-		for (int i = list.size() - 2; i >= 0; i--)
-			solution.append(list.get(i)).append(i == 0 ? "" : ",");
-		solution.substring(0, solution.length() - 1);
-		solution.append(";");
-		solution.append('\n');
-		solution.append(deathCount).append(";");
-		for (int i = 0; i < soldierHealths.length; i++)
-			solution.append(Math.min(100, soldierHealths[i])).append(i == soldierHealths.length - 1 ? "" : ",");
-		solution.substring(0, solution.length() - 1);
-		solution.append(";");
-		// ###########################REPLACE WITH ACTUAL
-		// EXPANDED###########################
-		solution.append(list.size() - 1);
-		// ###########################REPLACE WITH ACTUAL
-		// EXPANDED###########################
-		return solution.toString();
+		return Visualizer.visualize(missionImpossibleProblem, goalNode, visualize);
 	}
 
 	private static Problem parse(String grid) {
@@ -232,7 +132,7 @@ public class MissionImpossible extends GeneralSearch {
 		try {
 			Usage usage = new Usage();
 			usage.startMeasure();
-			String grid = "2,2;0,0;1,1;0,1,1,0;1,96;2";
+			String grid = "2,2;0,0;1,1;0,1,1,0;1,96;1";
 			System.out.println(solve(grid, Strategy.BF, true));
 			usage.endMeasure();
 			usage.printResults();
