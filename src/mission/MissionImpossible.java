@@ -1,19 +1,12 @@
 package mission;
 
 import java.util.Arrays;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Stack;
 
-import core.Action;
-import core.GeneralSearch;
 import core.Node;
 import core.Problem;
 import core.State;
 import core.Strategy;
 import core.search.GeneralSearch;
-import core.Usage;
 import data.Location;
 import data.Soldier;
 import data.SoldiersMap;
@@ -36,10 +29,10 @@ public class MissionImpossible extends Problem {
 		this.submarineLocation = submarineLocation;
 		this.soldiers = soldiers;
 	}
-	
+
 	@Override
 	public boolean goalTest(State state) {
-		MIState miState = (MIState)state;
+		MIState miState = (MIState) state;
 		return miState.getSoldiers().isAllRescued() && miState.getTruckLoad() == 0
 				&& miState.getLocation().equals(submarineLocation);
 	}
@@ -75,7 +68,7 @@ public class MissionImpossible extends Problem {
 
 	public State transition(State state, String operator) {
 		MIState miState = (MIState) state;
-		
+
 		Location location = miState.getLocation();
 		int truckLoad = miState.getTruckLoad();
 		SoldiersMap soldiers = miState.getSoldiers();
@@ -114,7 +107,7 @@ public class MissionImpossible extends Problem {
 		if (node.getOperator().toString() != "PICK")
 			return 0;
 
-		int soldierIdx = getSoldierIndexAtLocation(((MIState)node.getState()).getLocation());
+		int soldierIdx = getSoldierIndexAtLocation(((MIState) node.getState()).getLocation());
 
 		int cost = node.getPathCost();
 		int soldierHealth = 100 - soldiers[soldierIdx].getInitalDamage();
@@ -144,9 +137,30 @@ public class MissionImpossible extends Problem {
 		MissionImpossible missionImpossibleProblem = MapGenerator.parse(grid);
 		System.out.println(missionImpossibleProblem);
 		Node goalNode = GeneralSearch.search(missionImpossibleProblem, strategy);
-    return "";
+		String solution = Visualizer.visualize(missionImpossibleProblem, goalNode, visualize);
+		return solution;
 	}
-	
+
+	public int getN() {
+		return n;
+	}
+
+	public int getM() {
+		return m;
+	}
+
+	public Location getEthanLocation() {
+		return ethanLocation;
+	}
+
+	public Location getSubmarineLocation() {
+		return submarineLocation;
+	}
+
+	public Soldier[] getSoldiers() {
+		return soldiers;
+	}
+
 	@Override
 	public String toString() {
 		return "Problem [n=" + n + ", m=" + m + ", c=" + c + ", initialState=" + initialState + ", operators="
@@ -154,21 +168,3 @@ public class MissionImpossible extends Problem {
 				+ submarineLocation + ", soldiers=" + Arrays.toString(soldiers) + "]";
 	}
 }
-
-//		// String grid =
-//		// "13,9;4,6;5,7;3,10,4,4,5,9,6,1,8,8,2,12,7,0;34,39,95,64,3,16,88;1";
-//		try {
-//			Usage usage = new Usage();
-//			usage.startMeasure();
-//			String grid = "2,2;0,0;1,1;0,1,1,0;1,96;1";
-//			System.out.println(solve(grid, Strategy.BF, true));
-	//		usage.endMeasure();
-	//		usage.printResults();
-	//	} catch (IOException e) {
-			// TODO Auto-generated catch block
-	//		e.printStackTrace();
-//		}
-//
-//		String grid = "2,2;0,0;1,1;0,1,1,0;1,96;2";
-//		System.out.println(solve(grid, Strategy.BF, true));
-		// solve(grid, Strategy.BF, false);

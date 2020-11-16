@@ -4,48 +4,43 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Stack;
 
-import core.Action;
 import core.Node;
-import core.Problem;
 import data.Location;
 import data.Soldier;
 
 public class Visualizer {
 
-	static String visualize(Problem missionImpossibleProblem, Node goalNode, boolean visualize) {
+	static String visualize(MissionImpossible problem, Node goalNode, boolean visualizeSolutionGrids) {
 		StringBuilder solution = new StringBuilder();
 		Node head = goalNode;
-		ArrayList<Action> list = new ArrayList<>();
-		Stack<Action> stack = new Stack<Action>();
+		ArrayList<String> list = new ArrayList<>();
+		Stack<String> stack = new Stack<>();
 		while (true) {
 			if (head == null)
 				break;
-			list.add(head.getAction());
-			stack.push(head.getAction());
+			list.add(head.getOperator());
+			stack.push(head.getOperator());
 			head = head.getParent();
 		}
 
-		int n = missionImpossibleProblem.getN();
-		int m = missionImpossibleProblem.getM();
-		Location ethanLocation = missionImpossibleProblem.getEthanLocation();
-		Location submarineLocation = missionImpossibleProblem.getSubmarineLocation();
-		Soldier[] soldiers = missionImpossibleProblem.getSoldiers();
+		int n = problem.getN();
+		int m = problem.getM();
+		Location ethanLocation = problem.getEthanLocation();
+		Location submarineLocation = problem.getSubmarineLocation();
+		Soldier[] soldiers = problem.getSoldiers();
 		HashSet<Location> set = new HashSet<Location>();
 
-		for (Soldier soldier : soldiers) {
+		for (Soldier soldier : soldiers)
 			set.add(soldier.getLocation());
-		}
 
 		int truckCapacity = 0;
 		int soldierHealths[] = new int[soldiers.length];
 		int deathCount = 0;
 
 		for (int i = list.size() - 1; i >= 0; i--) {
-			if (list.get(i) == null) {
-
-			} else if (list.get(i) == Action.DROP)
+			if (list.get(i) == "DROP") {
 				truckCapacity = 0;
-			else if (list.get(i) == Action.PICK) {
+			} else if (list.get(i) == "PICK") {
 				truckCapacity += 1;
 				set.remove(ethanLocation);
 				// Check that it is - i not - i + 1.
@@ -58,25 +53,10 @@ public class Visualizer {
 				}
 			}
 
-			if (list.get(i) != null) {
-				switch ((Action) list.get(i)) {
-				case RIGHT:
-					ethanLocation.setY(ethanLocation.getY() + 1);
-					break;
-				case LEFT:
-					ethanLocation.setY(ethanLocation.getY() - 1);
-					break;
-				case DOWN:
-					ethanLocation.setX(ethanLocation.getX() + 1);
-					break;
-				case UP:
-					ethanLocation.setX(ethanLocation.getX() - 1);
-					break;
-				default:
-					break;
-				}
-			}
-			if (visualize) {
+			if (list.get(i) != null)
+				ethanLocation = Location.getNewLocation(ethanLocation, list.get(i));
+				
+			if (visualizeSolutionGrids) {
 				for (int c = 0; c < m; c++) {
 					for (int r = 0; r < n; r++) {
 						Location tempLocation = new Location(c, r);
@@ -104,15 +84,17 @@ public class Visualizer {
 		solution.append('\n');
 		solution.append(deathCount).append(";"); // Death count.
 		for (int i = 0; i < soldierHealths.length; i++)
-			// Soldier healths at goal state.
+			// Soldiers health at goal state.
 			solution.append(Math.min(100, soldierHealths[i])).append(i == soldierHealths.length - 1 ? "" : ",");
 		solution.substring(0, solution.length() - 1); // Expanded nodes.
 		solution.append(";");
+		
 		// ###########################REPLACE WITH ACTUAL
 		// EXPANDED###########################
 		solution.append(list.size() - 1);
 		// ###########################REPLACE WITH ACTUAL
 		// EXPANDED###########################
+		
 		return solution.toString();
 	}
 
