@@ -58,9 +58,9 @@ public class Visualizer {
 				ethanLocation = Location.getNewLocation(ethanLocation, list.get(i));
 
 			if (visualizeSolutionGrids) {
-				for (int c = 0; c < m; c++) {
-					for (int r = 0; r < n; r++) {
-						Location tempLocation = new Location(c, r);
+				for (int r = 0; r < n; r++) {
+					for (int c = 0; c < m; c++) {
+						Location tempLocation = new Location(r, c);
 						if (tempLocation.equals(ethanLocation)) {
 							System.out.print("E ");
 						} else if (tempLocation.equals(submarineLocation)) {
