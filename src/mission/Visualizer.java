@@ -48,6 +48,8 @@ public class Visualizer {
 				for (int soldierIdx = 0; soldierIdx < soldiers.length; soldierIdx++) {
 					Soldier soldier = soldiers[soldierIdx];
 					if (soldier.getLocation().equals(ethanLocation)) {
+						// Does the IMF soldier gain 2 more damage points while I pick them, or do they
+						// stop bleeding once I reach their cell?
 						soldierHealths[soldierIdx] = soldier.getInitalDamage() + 2 * (list.size() - 1 - i) - 2;
 						deathCount += soldierHealths[soldierIdx] >= 100 ? 1 : 0;
 					}
@@ -80,17 +82,17 @@ public class Visualizer {
 
 		// Plan.
 		for (int i = list.size() - 2; i >= 0; i--)
-			solution.append(list.get(i)).append(i == 0 ? ";" : ","); 
+			solution.append(list.get(i)).append(i == 0 ? ";" : ",");
 
 		// Death count.
-		solution.append(deathCount).append(";"); 
+		solution.append(deathCount).append(";");
 
 		// Soldiers health at goal state.
 		for (int i = 0; i < soldierHealths.length; i++)
 			solution.append(Math.min(100, soldierHealths[i])).append(i == soldierHealths.length - 1 ? ";" : ",");
 
 		// Expanded nodes.
-		solution.append(GeneralSearch.totalExpanded); 
+		solution.append(GeneralSearch.totalExpanded);
 
 		return solution.toString();
 	}
