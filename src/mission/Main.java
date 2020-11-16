@@ -3,7 +3,7 @@ package mission;
 import java.io.IOException;
 
 import core.Strategy;
-import core.Usage;
+import usage.Usage;
 
 public class Main {
 

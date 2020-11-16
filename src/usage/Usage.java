@@ -1,4 +1,4 @@
-package core;
+package usage;
 
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
