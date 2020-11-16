@@ -116,7 +116,7 @@ public class MissionImpossible extends GeneralSearch {
 			set.add(soldier.getLocation());
 		}
 
-		int count = 0;
+		int truckCapacity = 0;
 		int soldierHealths[] = new int[soldiers.length];
 		int deathCount = 0;
 
@@ -124,9 +124,9 @@ public class MissionImpossible extends GeneralSearch {
 			if (list.get(i) == null) {
 
 			} else if (list.get(i) == Action.DROP)
-				count = 0;
+				truckCapacity = 0;
 			else if (list.get(i) == Action.PICK) {
-				count += 1;
+				truckCapacity += 1;
 				set.remove(ethanLocation);
 				// Check that it is - i not - i + 1.
 				for (int soldierIdx = 0; soldierIdx < soldiers.length; soldierIdx++) {
@@ -172,20 +172,21 @@ public class MissionImpossible extends GeneralSearch {
 					}
 					System.out.println();
 				}
-				System.out.println("Truck Capacity: " + count);
+				System.out.println("Truck Capacity: " + truckCapacity);
 				System.out.println();
 			}
 		}
 
 		for (int i = list.size() - 2; i >= 0; i--)
-			solution.append(list.get(i)).append(i == 0 ? "" : ",");
+			solution.append(list.get(i)).append(i == 0 ? "" : ","); // Plan.
 		solution.substring(0, solution.length() - 1);
 		solution.append(";");
 		solution.append('\n');
-		solution.append(deathCount).append(";");
+		solution.append(deathCount).append(";"); // Death count.
 		for (int i = 0; i < soldierHealths.length; i++)
+			// Soldier healths at goal state.
 			solution.append(Math.min(100, soldierHealths[i])).append(i == soldierHealths.length - 1 ? "" : ",");
-		solution.substring(0, solution.length() - 1);
+		solution.substring(0, solution.length() - 1); // Expanded nodes.
 		solution.append(";");
 		// ###########################REPLACE WITH ACTUAL
 		// EXPANDED###########################
@@ -232,7 +233,7 @@ public class MissionImpossible extends GeneralSearch {
 		try {
 			Usage usage = new Usage();
 			usage.startMeasure();
-			String grid = "2,2;0,0;1,1;0,1,1,0;1,96;2";
+			String grid = "2,2;0,0;1,1;0,1,1,0;1,96;1";
 			System.out.println(solve(grid, Strategy.BF, true));
 			usage.endMeasure();
 			usage.printResults();
