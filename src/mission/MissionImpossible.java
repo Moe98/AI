@@ -103,13 +103,13 @@ public class MissionImpossible extends Problem {
 		}
 	}
 
-	public int pathCost(Node node) {
+	public int pathCostTrivial(Node node) {
 		if (node.getOperator().toString() != "PICK")
 			return 0;
 
 		int soldierIdx = getSoldierIndexAtLocation(((MIState) node.getState()).getLocation());
 
-		int cost = node.getPathCost();
+		int cost = 0;
 		int soldierHealth = 100 - soldiers[soldierIdx].getInitalDamage();
 		if (soldierHealth <= node.getDepth() * 2)
 			cost += soldierHealth + 10000;
@@ -117,6 +117,30 @@ public class MissionImpossible extends Problem {
 			cost += node.getDepth() * 2;
 
 		return cost;
+	}
+
+	public int pathCost(Node node) {
+		MIState state = (MIState) node.getState();
+		SoldiersMap soldiersMap = state.getSoldiers();
+
+		int remainingSoldiers = 0;
+		int justDied = 0;
+		int isPickedUpSoldierIdx = getSoldierIndexAtLocation(((MIState) node.getState()).getLocation());
+		
+		if (node.getOperator().toString() != "PICK")
+			isPickedUpSoldierIdx = -1;
+
+		for (int i = 0; i < soldiers.length; i++) {
+			if (!soldiersMap.isSoldierRescued(i) && i != isPickedUpSoldierIdx) {
+				int soldierHealth = 100 - soldiers[i].getInitalDamage();
+				int damageCaused = node.getDepth() * 2;
+				if (soldierHealth > damageCaused)
+					remainingSoldiers++;
+				else if (soldierHealth == damageCaused || soldierHealth == damageCaused - 1)
+					justDied++;
+			}
+		}
+		return remainingSoldiers * 2 + justDied * 10000;
 	}
 
 	public int h1(Node node) {
@@ -148,7 +172,7 @@ public class MissionImpossible extends Problem {
 				int distanceFromEthan = Location.getManhattanDistance(ethanLocation, soldiers[i].getLocation());
 				maxDistance = Math.max(maxDistance, distanceFromEthan);
 			}
-		
+
 		if (maxDistance == -1)
 			maxDistance = 0;
 
