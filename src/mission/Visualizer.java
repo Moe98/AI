@@ -40,10 +40,12 @@ public class Visualizer {
 		int soldierHealths[] = new int[soldiers.length];
 		int deathCount = 0;
 		for (int i = list.size() - 1; i >= 0; i--) {
-			if (list.get(i) == null)
-				System.out.println("Action : Initial State");
-			else
-				System.out.println("Action : " + list.get(i));
+			if (visualizeSolutionGrids) {
+				if (list.get(i) == null)
+					printWriter.println("Action : Initial State");
+				else
+					printWriter.println("Action : " + list.get(i));
+			}
 			if (list.get(i) == "DROP") {
 				truckCapacity = 0;
 			} else if (list.get(i) == "PICK") {
@@ -65,6 +67,7 @@ public class Visualizer {
 				ethanLocation = Location.getNewLocation(ethanLocation, list.get(i));
 
 			if (visualizeSolutionGrids) {
+				System.err.println("wrong!");
 				for (int r = 0; r < n; r++) {
 					for (int c = 0; c < m; c++) {
 						Location tempLocation = new Location(r, c);
@@ -100,7 +103,6 @@ public class Visualizer {
 
 		// Expanded nodes.
 		solution.append(GeneralSearch.totalExpanded);
-
 		return solution.toString();
 	}
 
