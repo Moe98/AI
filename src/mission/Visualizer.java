@@ -106,4 +106,19 @@ public class Visualizer {
 		return solution.toString();
 	}
 
+	private static int sumOfDamages(String str) {
+		String[] damages = str.split(",");
+		int sum = 0;
+		for (String s : damages)
+			sum += Integer.parseInt(s);
+		return sum;
+	}
+
+	static void visualizeSolution(String solution) {
+		String[] tokens = solution.split(";");
+		System.out.println("Moves: " + tokens[0]);
+		System.out.println(
+				"Deaths: " + tokens[1] + " Damages: " + sumOfDamages(tokens[2]) + " ExpandedNodes: " + tokens[3]);
+	}
+
 }
