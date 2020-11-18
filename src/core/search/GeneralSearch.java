@@ -13,43 +13,30 @@ public class GeneralSearch {
 
 	private static boolean hasDepthLimit;
 	private static int depthLimit;
-
-	private static Node getInitialNode(Problem problem, Strategy strategy) {
-		Node root = new Node(null, problem.getInitialState(), null, 0, 0);
-		int initialCost = 0;
-		int h1 = problem.h1(root);
-		int h2 = problem.h2(root);
-		switch (strategy) {
-		case GR1:
-		case AS1:
-			initialCost = h1;
-			break;
-		case AS2:
-		case GR2:
-			initialCost = h2;
-			break;
-		default:
-			initialCost = 0;
-		}
-		root.setPathCost(initialCost);
-		return root;
-	}
-
+	
 	private static int calculatePathCost(Node a, Node b, Problem problem, Strategy strategy) {
 		int g = a.getPathCost() + problem.pathCost(b);
-		int h1 = problem.h1(b) - problem.h1(a);
-		int h2 = problem.h2(b) - problem.h2(a);
 		switch (strategy) {
 		case GR1:
-			return h1;
 		case GR2:
-			return h2;
-		case AS1:
-			return g + h1;
-		case AS2:
-			return g + h2;
+			return 0;
 		default:
 			return g;
+		}
+	}
+
+	private static int calculateHeuristicCost(Node node, Problem problem, Strategy strategy) {
+		int h1 = problem.h1(node);
+		int h2 = problem.h2(node);
+		switch (strategy) {
+		case GR1:
+		case AS1:
+			return h1;
+		case AS2:
+		case GR2:
+			return h2;
+		default:
+			return 0;
 		}
 	}
 
@@ -60,9 +47,9 @@ public class GeneralSearch {
 			State nextState = (State) problem.transition(currentState, operator);
 			if (nextState.equals(currentState))
 				continue;
-			Node expandedNode = new Node(currNode, nextState, operator, currNode.getDepth() + 1, 0);
-			int pathCost = calculatePathCost(currNode, expandedNode, problem, strategy);
-			expandedNode.setPathCost(pathCost);
+			Node expandedNode = new Node(currNode, nextState, operator, currNode.getDepth() + 1);
+			expandedNode.setPathCost(calculatePathCost(currNode, expandedNode, problem, strategy));
+			expandedNode.setHeuristicCost(calculateHeuristicCost(expandedNode, problem, strategy));
 			expandedNodes.add(expandedNode);
 		}
 		return expandedNodes;
@@ -70,12 +57,13 @@ public class GeneralSearch {
 
 	private static Node performSearch(Problem problem, Strategy strategy) {
 		SearchTree tree = SearchTree.makeTree(strategy);
-		tree.push(getInitialNode(problem, strategy));
+		Node root = new Node(null, problem.getInitialState(), null, 0);
+		tree.push(root);
 		while (!tree.isEmpty()) {
 			Node current = tree.pop();
 			if (problem.goalTest(current.getState()))
 				return current;
-			if (hasDepthLimit && current.getDepth() > depthLimit)
+			if (hasDepthLimit && current.getDepth() == depthLimit)
 				continue;
 			ArrayList<Node> children = expand(current, problem, strategy);
 			totalExpanded++;
