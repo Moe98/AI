@@ -32,6 +32,10 @@ public class Location {
 		return location.x >= 0 && location.x < height && location.y >= 0 && location.y < width;
 	}
 
+	public static int getManhattanDistance(Location a, Location b) {
+		return Math.abs(a.getX() - b.getX()) + Math.abs(a.getY() - b.getY());
+	}
+
 	public int getX() {
 		return x;
 	}
@@ -47,12 +51,12 @@ public class Location {
 	public void setY(int y) {
 		this.y = y;
 	}
-	
+
 	@Override
 	public int hashCode() {
 		return Objects.hash(this.x, this.y);
 	}
-	
+
 	@Override
 	public boolean equals(Object obj) {
 		Location location = (Location) obj;

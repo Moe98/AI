@@ -39,8 +39,11 @@ public class Visualizer {
 		int truckCapacity = 0;
 		int soldierHealths[] = new int[soldiers.length];
 		int deathCount = 0;
-
 		for (int i = list.size() - 1; i >= 0; i--) {
+			if (list.get(i) == null)
+				System.out.println("Action : Initial State");
+			else
+				System.out.println("Action : " + list.get(i));
 			if (list.get(i) == "DROP") {
 				truckCapacity = 0;
 			} else if (list.get(i) == "PICK") {

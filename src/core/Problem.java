@@ -24,5 +24,9 @@ public abstract class Problem {
 	public String[] getOperators() {
 		return operators;
 	}
+	
+	public abstract int h1(Node node);
+	
+	public abstract int h2(Node node);
 
 }
