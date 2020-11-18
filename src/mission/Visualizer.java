@@ -98,9 +98,12 @@ public class Visualizer {
 		solution.append(deathCount).append(";");
 
 		// Soldiers health at goal state.
-		for (int i = 0; i < soldierHealths.length; i++)
-			solution.append(Math.min(100, soldierHealths[i])).append(i == soldierHealths.length - 1 ? ";" : ",");
-
+		int damageSum = 0;
+		for (int i = 0; i < soldierHealths.length; i++) {
+			damageSum += Math.min(100, soldierHealths[i]);
+//			solution.append(Math.min(100, soldierHealths[i])).append(i == soldierHealths.length - 1 ? ";" : ",");
+		}
+		solution.append(damageSum).append(";");
 		// Expanded nodes.
 		solution.append(GeneralSearch.totalExpanded);
 		return solution.toString();
