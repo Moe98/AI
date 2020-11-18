@@ -4,20 +4,21 @@ public class Node implements Comparable<Node> {
 	private Node parent;
 	private State state;
 	private String operator;
-	private int depth, pathCost;
+	private int depth, pathCost, heuristicCost;
 
-	public Node(Node parent, State state, String operator, int depth, int pathCost) {
+	public Node(Node parent, State state, String operator, int depth) {
 		super();
 		this.parent = parent;
 		this.state = state;
 		this.operator = operator;
 		this.depth = depth;
-		this.pathCost = pathCost;
+		this.pathCost = 0;
+		this.heuristicCost = 0;
 	}
 
 	@Override
 	public int compareTo(Node o) {
-		return pathCost - o.pathCost;
+		return (pathCost + heuristicCost) - (o.pathCost + o.heuristicCost);
 	}
 
 	public Node getParent() {
@@ -59,10 +60,18 @@ public class Node implements Comparable<Node> {
 	public void setPathCost(int pathCost) {
 		this.pathCost = pathCost;
 	}
+	
+	public int getHeuristicCost() {
+		return heuristicCost;
+	}
+	
+	public void setHeuristicCost(int heuristicCost) {
+		this.heuristicCost = heuristicCost;
+	}
 
 	@Override
 	public String toString() {
 		return "Node [parent=" + parent + ", state=" + state + ", operator=" + operator + ", depth=" + depth
-				+ ", pathCost=" + pathCost + "]";
+				+ ", pathCost=" + pathCost + ", heuristicCost=" + heuristicCost + "]";
 	}
 }

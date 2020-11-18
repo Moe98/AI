@@ -14,7 +14,6 @@ public class SearchQueue extends SearchTree {
 
 	@Override
 	public void push(Node node) {
-		super.push(node);
 		((LinkedList<Node>) this.tree).push(node);
 	}
 

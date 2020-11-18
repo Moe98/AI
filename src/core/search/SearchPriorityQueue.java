@@ -14,7 +14,6 @@ public class SearchPriorityQueue extends SearchTree {
 
 	@Override
 	public void push(Node node) {
-		super.push(node);
 		((PriorityQueue<Node>) this.tree).add(node);
 	}
 

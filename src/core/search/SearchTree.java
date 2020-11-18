@@ -4,7 +4,6 @@ import java.util.HashSet;
 
 import core.Node;
 import core.State;
-import core.Strategy;
 
 public abstract class SearchTree {
 	protected Object tree;
@@ -14,9 +13,7 @@ public abstract class SearchTree {
 		visited = new HashSet<>();
 	}
 
-	public void push(Node node) {
-		visited.add(node.getState());
-	}
+	public abstract void push(Node node);
 
 	public abstract Node pop();
 
@@ -25,12 +22,20 @@ public abstract class SearchTree {
 	public boolean isVisited(Node node) {
 		return visited.contains(node.getState());
 	}
+	
+	public void markVisited(Node node) {
+		visited.add(node.getState());
+	}
 
-	public static SearchTree makeTree(Strategy strategy) {
-		if (strategy == Strategy.DF || strategy == Strategy.ID)
+	public static SearchTree makeTree(String strategy) {
+		switch (strategy) {
+		case "DF":
+		case "ID":
 			return new SearchStack();
-		if (strategy == Strategy.BF)
+		case "BF":
 			return new SearchQueue();
-		return new SearchPriorityQueue();
+		default:
+			return new SearchPriorityQueue();
+		}
 	}
 }

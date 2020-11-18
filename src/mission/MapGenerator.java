@@ -8,10 +8,10 @@ import data.SoldiersMap;
 
 public class MapGenerator {
 	private static StringBuilder grid;
-	private static final int minGridRange = 5;
-	private static final int maxGridRange = 15;
+	private static final int minGridRange = 3;
+	private static final int maxGridRange = 3;
 	private static final int minSoldierCount = 1;
-	private static final int maxSoldierCount = 10;
+	private static final int maxSoldierCount = 2;
 	private static final int minHealth = 1;
 	private static final int maxHealth = 99;
 
@@ -43,7 +43,7 @@ public class MapGenerator {
 			}
 		}
 
-		int soldiers = generateNumberWithinRange(minSoldierCount, maxSoldierCount);
+		int soldiers = generateNumberWithinRange(minSoldierCount, Math.min(maxSoldierCount, n*m-2));
 		int c = generateNumberWithinRange(minSoldierCount, maxSoldierCount);
 		append(m, n);
 		append(ethan.getX(), ethan.getY());
@@ -109,7 +109,7 @@ public class MapGenerator {
 
 		int truckCapacity = Integer.parseInt(splitter[5]);
 
-		String[] operators = { "UP", "DOWN",  "RIGHT", "LEFT", "DROP", "PICK" };
+		String[] operators = { "up", "down",  "right", "left", "drop", "carry" };
 		State intialState = new MIState(ethanLocation, 0, new SoldiersMap(numOfSoldiers));
 
 		return new MissionImpossible(operators, intialState, n, m, truckCapacity, ethanLocation, submarineLocation,

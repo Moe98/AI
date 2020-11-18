@@ -40,13 +40,15 @@ public class Visualizer {
 		int soldierHealths[] = new int[soldiers.length];
 		int deathCount = 0;
 		for (int i = list.size() - 1; i >= 0; i--) {
-			if (list.get(i) == null)
-				System.out.println("Action : Initial State");
-			else
-				System.out.println("Action : " + list.get(i));
-			if (list.get(i) == "DROP") {
+			if (visualizeSolutionGrids) {
+				if (list.get(i) == null)
+					printWriter.println("Action : Initial State");
+				else
+					printWriter.println("Action : " + list.get(i));
+			}
+			if (list.get(i) != null && list.get(i).equals("drop")) {
 				truckCapacity = 0;
-			} else if (list.get(i) == "PICK") {
+			} else if (list.get(i) != null && list.get(i).equals("carry")) {
 				truckCapacity += 1;
 				set.remove(ethanLocation);
 				// Check that it is - i not - i + 1.
@@ -95,13 +97,27 @@ public class Visualizer {
 		solution.append(deathCount).append(";");
 
 		// Soldiers health at goal state.
-		for (int i = 0; i < soldierHealths.length; i++)
+		for (int i = 0; i < soldierHealths.length; i++) {
 			solution.append(Math.min(100, soldierHealths[i])).append(i == soldierHealths.length - 1 ? ";" : ",");
-
+		}
 		// Expanded nodes.
 		solution.append(GeneralSearch.totalExpanded);
-
 		return solution.toString();
+	}
+
+	private static int sumOfDamages(String str) {
+		String[] damages = str.split(",");
+		int sum = 0;
+		for (String s : damages)
+			sum += Integer.parseInt(s);
+		return sum;
+	}
+
+	public static void visualizeSolution(String solution) {
+		String[] tokens = solution.split(";");
+		System.out.println("Moves: " + tokens[0]);
+		System.out.println(
+				"Deaths: " + tokens[1] + " Damages: " + sumOfDamages(tokens[2]) + " ExpandedNodes: " + tokens[3]);
 	}
 
 }
