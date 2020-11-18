@@ -125,6 +125,7 @@ public class MissionImpossible extends Problem {
 
 		int remainingSoldiers = 0;
 		int justDied = 0;
+		int damageBeforeDeath = 0;
 		int isPickedUpSoldierIdx = getSoldierIndexAtLocation(((MIState) node.getState()).getLocation());
 		
 		if (node.getOperator().toString() != "PICK")
@@ -134,13 +135,18 @@ public class MissionImpossible extends Problem {
 			if (!soldiersMap.isSoldierRescued(i) && i != isPickedUpSoldierIdx) {
 				int soldierHealth = 100 - soldiers[i].getInitalDamage();
 				int damageCaused = node.getDepth() * 2;
-				if (soldierHealth > damageCaused)
+				if (soldierHealth > damageCaused) {
 					remainingSoldiers++;
-				else if (soldierHealth == damageCaused || soldierHealth == damageCaused - 1)
+				} else if (soldierHealth == damageCaused) {
 					justDied++;
+					damageBeforeDeath += 2;
+				} else if(soldierHealth == damageCaused - 1) {
+					justDied++;
+					damageBeforeDeath += 1;
+				}
 			}
 		}
-		return remainingSoldiers * 2 + justDied * 10000;
+		return remainingSoldiers * 2 + justDied * 10000 + damageBeforeDeath;
 	}
 
 	public int h1(Node node) {
