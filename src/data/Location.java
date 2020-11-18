@@ -33,7 +33,8 @@ public class Location {
 	}
 
 	public static int getManhattanDistance(Location a, Location b) {
-		return Math.abs(a.getX() - b.getX()) + Math.abs(a.getY() - b.getY());
+//		return Math.abs(a.getX() - b.getX()) + Math.abs(a.getY() - b.getY());
+		return Math.abs(a.getX() - b.getX());
 	}
 
 	public int getX() {

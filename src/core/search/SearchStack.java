@@ -14,7 +14,6 @@ public class SearchStack extends SearchTree {
 
 	@Override
 	public void push(Node node) {
-		super.push(node);
 		((Stack<Node>) this.tree).push(node);
 	}
 

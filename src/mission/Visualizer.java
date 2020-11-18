@@ -113,7 +113,7 @@ public class Visualizer {
 		return sum;
 	}
 
-	static void visualizeSolution(String solution) {
+	public static void visualizeSolution(String solution) {
 		String[] tokens = solution.split(";");
 		System.out.println("Moves: " + tokens[0]);
 		System.out.println(

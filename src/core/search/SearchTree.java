@@ -13,9 +13,7 @@ public abstract class SearchTree {
 		visited = new HashSet<>();
 	}
 
-	public void push(Node node) {
-		visited.add(node.getState());
-	}
+	public abstract void push(Node node);
 
 	public abstract Node pop();
 
@@ -23,6 +21,10 @@ public abstract class SearchTree {
 
 	public boolean isVisited(Node node) {
 		return visited.contains(node.getState());
+	}
+	
+	public void markVisited(Node node) {
+		visited.add(node.getState());
 	}
 
 	public static SearchTree makeTree(String strategy) {

@@ -64,6 +64,7 @@ public class GeneralSearch {
 				return current;
 			if (hasDepthLimit && current.getDepth() == depthLimit)
 				continue;
+			tree.markVisited(current);
 			ArrayList<Node> children = expand(current, problem, strategy);
 			totalExpanded++;
 			for (Node node : children)
