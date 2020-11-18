@@ -15,7 +15,7 @@ public class Main {
 		try {
 			Usage usage = new Usage();
 			usage.startMeasure();
-			String solution = MissionImpossible.solve(grid, Strategy.AS1, true);
+			String solution = MissionImpossible.solve(grid, Strategy.DF, true);
 			System.out.println(solution);
 			usage.endMeasure();
 			usage.printResults();

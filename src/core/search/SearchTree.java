@@ -27,7 +27,7 @@ public abstract class SearchTree {
 	}
 
 	public static SearchTree makeTree(Strategy strategy) {
-		if (strategy == Strategy.DF)
+		if (strategy == Strategy.DF || strategy == Strategy.ID)
 			return new SearchStack();
 		if (strategy == Strategy.BF)
 			return new SearchQueue();
