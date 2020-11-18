@@ -1,5 +1,6 @@
 package mission;
 
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Stack;
@@ -16,6 +17,7 @@ public class Visualizer {
 		Node head = goalNode;
 		ArrayList<String> list = new ArrayList<>();
 		Stack<String> stack = new Stack<>();
+		PrintWriter printWriter = new PrintWriter(System.out);
 		while (true) {
 			if (head == null)
 				break;
@@ -64,21 +66,23 @@ public class Visualizer {
 					for (int c = 0; c < m; c++) {
 						Location tempLocation = new Location(r, c);
 						if (tempLocation.equals(ethanLocation)) {
-							System.out.print("E ");
+							printWriter.print("E ");
 						} else if (tempLocation.equals(submarineLocation)) {
-							System.out.print("S ");
+							printWriter.print("S ");
 						} else if (set.contains(tempLocation)) {
-							System.out.print("M ");
+							printWriter.print("M ");
 						} else {
-							System.out.print(". ");
+							printWriter.print(". ");
 						}
 					}
-					System.out.println();
+					printWriter.println();
 				}
-				System.out.println("Truck Capacity: " + truckCapacity);
-				System.out.println();
+				printWriter.println("Truck Capacity: " + truckCapacity);
+				printWriter.println();
 			}
 		}
+
+		printWriter.flush();
 
 		// Plan.
 		for (int i = list.size() - 2; i >= 0; i--)
