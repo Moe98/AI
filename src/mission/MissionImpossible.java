@@ -164,7 +164,7 @@ public class MissionImpossible extends Problem {
 		if (minDistance == Integer.MAX_VALUE)
 			minDistance = 0;
 
-		return minDistance;
+		return 1;
 	}
 
 	public int h2(Node node) {
@@ -182,7 +182,7 @@ public class MissionImpossible extends Problem {
 		if (maxDistance == -1)
 			maxDistance = 0;
 
-		return maxDistance;
+		return 1;
 	}
 
 	public int getSoldierIndexAtLocation(Location location) {

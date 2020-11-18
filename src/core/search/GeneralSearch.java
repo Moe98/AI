@@ -14,10 +14,31 @@ public class GeneralSearch {
 	private static boolean hasDepthLimit;
 	private static int depthLimit;
 
-	public static int calculatePathCost(Node a, Node b, Problem problem, Strategy strategy) {
+	private static Node getInitialNode(Problem problem, Strategy strategy) {
+		Node root = new Node(null, problem.getInitialState(), null, 0, 0);
+		int initialCost = 0;
+		int h1 = problem.h1(root);
+		int h2 = problem.h2(root);
+		switch (strategy) {
+		case GR1:
+		case AS1:
+			initialCost = h1;
+			break;
+		case AS2:
+		case GR2:
+			initialCost = h2;
+			break;
+		default:
+			initialCost = 0;
+		}
+		root.setPathCost(initialCost);
+		return root;
+	}
+
+	private static int calculatePathCost(Node a, Node b, Problem problem, Strategy strategy) {
 		int g = a.getPathCost() + problem.pathCost(b);
-		int h1 = problem.h1(b);
-		int h2 = problem.h2(b);
+		int h1 = problem.h1(b) - problem.h1(a);
+		int h2 = problem.h2(b) - problem.h2(a);
 		switch (strategy) {
 		case GR1:
 			return h1;
@@ -49,7 +70,7 @@ public class GeneralSearch {
 
 	private static Node performSearch(Problem problem, Strategy strategy) {
 		SearchTree tree = SearchTree.makeTree(strategy);
-		tree.push(new Node(null, problem.getInitialState(), null, 0, 0));
+		tree.push(getInitialNode(problem, strategy));
 		while (!tree.isEmpty()) {
 			Node current = tree.pop();
 			if (problem.goalTest(current.getState()))

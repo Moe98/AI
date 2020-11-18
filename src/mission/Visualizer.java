@@ -67,7 +67,6 @@ public class Visualizer {
 				ethanLocation = Location.getNewLocation(ethanLocation, list.get(i));
 
 			if (visualizeSolutionGrids) {
-				System.err.println("wrong!");
 				for (int r = 0; r < n; r++) {
 					for (int c = 0; c < m; c++) {
 						Location tempLocation = new Location(r, c);
@@ -98,12 +97,9 @@ public class Visualizer {
 		solution.append(deathCount).append(";");
 
 		// Soldiers health at goal state.
-		int damageSum = 0;
 		for (int i = 0; i < soldierHealths.length; i++) {
-			damageSum += Math.min(100, soldierHealths[i]);
-//			solution.append(Math.min(100, soldierHealths[i])).append(i == soldierHealths.length - 1 ? ";" : ",");
+			solution.append(Math.min(100, soldierHealths[i])).append(i == soldierHealths.length - 1 ? ";" : ",");
 		}
-		solution.append(damageSum).append(";");
 		// Expanded nodes.
 		solution.append(GeneralSearch.totalExpanded);
 		return solution.toString();
