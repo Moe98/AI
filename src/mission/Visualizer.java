@@ -46,9 +46,9 @@ public class Visualizer {
 				else
 					printWriter.println("Action : " + list.get(i));
 			}
-			if (list.get(i) == "DROP") {
+			if (list.get(i) != null && list.get(i).equals("drop")) {
 				truckCapacity = 0;
-			} else if (list.get(i) == "PICK") {
+			} else if (list.get(i) != null && list.get(i).equals("carry")) {
 				truckCapacity += 1;
 				set.remove(ethanLocation);
 				// Check that it is - i not - i + 1.
