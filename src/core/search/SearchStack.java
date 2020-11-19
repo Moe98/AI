@@ -14,7 +14,6 @@ public class SearchStack extends SearchTree {
 
 	@Override
 	public void push(Node node) {
-		super.push(node);
 		((Stack<Node>) this.tree).push(node);
 	}
 
@@ -26,6 +25,14 @@ public class SearchStack extends SearchTree {
 	@Override
 	public boolean isEmpty() {
 		return ((Stack<Node>) this.tree).isEmpty();
+	}
+	
+	public boolean isVisited(Node node) {
+		return visited.containsKey(node.getState());
+	}
+	
+	public void markVisited(Node node) {
+		visited.put(node.getState(), 0);
 	}
 
 }

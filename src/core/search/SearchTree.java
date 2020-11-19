@@ -1,36 +1,37 @@
 package core.search;
 
-import java.util.HashSet;
+import java.util.HashMap;
 
 import core.Node;
 import core.State;
-import core.Strategy;
 
 public abstract class SearchTree {
 	protected Object tree;
-	protected HashSet<State> visited;
+	protected HashMap<State, Integer> visited;
 
 	public SearchTree() {
-		visited = new HashSet<>();
+		visited = new HashMap<>();
 	}
 
-	public void push(Node node) {
-		visited.add(node.getState());
-	}
+	public abstract void push(Node node);
 
 	public abstract Node pop();
 
 	public abstract boolean isEmpty();
 
-	public boolean isVisited(Node node) {
-		return visited.contains(node.getState());
-	}
+	public abstract boolean isVisited(Node node);
+	
+	public abstract void markVisited(Node node);
 
-	public static SearchTree makeTree(Strategy strategy) {
-		if (strategy == Strategy.DF || strategy == Strategy.ID)
+	public static SearchTree makeTree(String strategy) {
+		switch (strategy) {
+		case "DF":
+		case "ID":
 			return new SearchStack();
-		if (strategy == Strategy.BF)
+		case "BF":
 			return new SearchQueue();
-		return new SearchPriorityQueue();
+		default:
+			return new SearchPriorityQueue();
+		}
 	}
 }

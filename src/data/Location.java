@@ -15,13 +15,13 @@ public class Location {
 		int x = oldLocation.getX();
 		int y = oldLocation.getY();
 		switch (move) {
-		case "UP":
+		case "up":
 			return new Location(x - 1, y);
-		case "DOWN":
+		case "down":
 			return new Location(x + 1, y);
-		case "LEFT":
+		case "left":
 			return new Location(x, y - 1);
-		case "RIGHT":
+		case "right":
 			return new Location(x, y + 1);
 		default:
 			return new Location(x, y);
