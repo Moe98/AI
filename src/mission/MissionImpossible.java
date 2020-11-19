@@ -136,9 +136,12 @@ public class MissionImpossible extends Problem {
 		MIState state = (MIState) node.getState();
 		SoldiersMap solidersMap = state.getSoldiers();
 		int remainingSoldiers = 0;
-		for (int i = 0; i < soldiers.length; i++)
-			if (!solidersMap.isSoldierRescued(i))
+		for (int i = 0; i < soldiers.length; i++) {
+			int soldierHealth = 100 - soldiers[i].getInitalDamage();
+			int damageCaused = node.getDepth() * 2;
+			if (!solidersMap.isSoldierRescued(i) && soldierHealth > damageCaused)
 				remainingSoldiers++;
+		}
 		return remainingSoldiers;
 	}
 
@@ -148,11 +151,14 @@ public class MissionImpossible extends Problem {
 		SoldiersMap solidersMap = state.getSoldiers();
 		Location ethanLocation = state.getLocation();
 
-		for (int i = 0; i < soldiers.length; i++)
-			if (!solidersMap.isSoldierRescued(i)) {
+		for (int i = 0; i < soldiers.length; i++) {
+			int soldierHealth = 100 - soldiers[i].getInitalDamage();
+			int damageCaused = node.getDepth() * 2;
+			if (!solidersMap.isSoldierRescued(i) && soldierHealth > damageCaused) {
 				int distanceFromEthan = Location.getManhattanDistance(ethanLocation, soldiers[i].getLocation());
 				minDistance = Math.min(minDistance, distanceFromEthan);
 			}
+		}
 
 		if (minDistance == Integer.MAX_VALUE)
 			minDistance = 0;
