@@ -17,6 +17,7 @@ public class MissionImpossible extends Problem {
 	private Location ethanLocation, submarineLocation;
 	private Soldier[] soldiers;
 	private String[] operators;
+	private final int MAX_STEPS = 560;
 
 	public MissionImpossible(String[] operators, State initialState, int n, int m, int c, Location ethanLocation,
 			Location submarineLocation, Soldier[] soldiers) {
@@ -41,60 +42,74 @@ public class MissionImpossible extends Problem {
 		int truckLoad = state.getTruckLoad();
 		SoldiersMap soldiersMap = state.getSoldiers();
 
+		int steps = state.getSteps();
+		
 		SoldiersMap newSoldiers = new SoldiersMap(soldiersMap.getNumOfSoldiers(), soldiersMap.getBitmap());
-		if (location.equals(submarineLocation) && truckLoad > 0)
+		if (location.equals(submarineLocation) && truckLoad > 0) {
 			truckLoad = 0;
-		return new MIState(Location.getNewLocation(location, "DROP"), truckLoad, newSoldiers);
+			steps++;
+		}
+		return new MIState(Location.getNewLocation(location, "drop"), truckLoad, newSoldiers, steps);
 	}
 
 	public MIState stateAfterPick(MIState state) {
 		Location location = state.getLocation();
-		int truckLoad = state.getTruckLoad();
 		SoldiersMap soldiersMap = state.getSoldiers();
 
-		int newTruckLoad = truckLoad;
+		int truckLoad = state.getTruckLoad();
+		int steps = state.getSteps();
 		SoldiersMap newSoldiersMap = new SoldiersMap(soldiersMap.getNumOfSoldiers(), soldiersMap.getBitmap());
 
 		int soldierIdx = getSoldierIndexAtLocation(location);
 
 		if (soldierIdx != -1 && truckLoad < c && !soldiersMap.isSoldierRescued(soldierIdx)) {
-			newTruckLoad++;
+			truckLoad++;
+			steps++;
 			newSoldiersMap.pickupSoldier(soldierIdx);
 		}
 
-		return new MIState(Location.getNewLocation(location, "PICK"), newTruckLoad, newSoldiersMap);
+		return new MIState(Location.getNewLocation(location, "carry"), truckLoad, newSoldiersMap, steps);
 	}
 
 	public State transition(State state, String operator) {
 		MIState miState = (MIState) state;
-
+		if(miState.getSteps() >= MAX_STEPS) return state;
 		Location location = miState.getLocation();
 		int truckLoad = miState.getTruckLoad();
 		SoldiersMap soldiers = miState.getSoldiers();
 
 		Location newLocation;
+		int newSteps = miState.getSteps() + 1;
 
 		switch (operator) {
 		case "up":
 			newLocation = Location.getNewLocation(location, "up");
-			if (!Location.locationInBounds(newLocation, n, m))
+			if (!Location.locationInBounds(newLocation, n, m)) {
+				newSteps--;
 				newLocation = Location.getNewLocation(newLocation, "down");
-			return new MIState(newLocation, truckLoad, soldiers);
+			}
+			return new MIState(newLocation, truckLoad, soldiers, newSteps);
 		case "down":
 			newLocation = Location.getNewLocation(location, "down");
-			if (!Location.locationInBounds(newLocation, n, m))
+			if (!Location.locationInBounds(newLocation, n, m)) {
+				newSteps--;
 				newLocation = Location.getNewLocation(newLocation, "up");
-			return new MIState(newLocation, truckLoad, soldiers);
+			}
+			return new MIState(newLocation, truckLoad, soldiers, newSteps);
 		case "left":
 			newLocation = Location.getNewLocation(location, "left");
-			if (!Location.locationInBounds(newLocation, n, m))
+			if (!Location.locationInBounds(newLocation, n, m)) {
+				newSteps--;
 				newLocation = Location.getNewLocation(newLocation, "right");
-			return new MIState(newLocation, truckLoad, soldiers);
+			}
+			return new MIState(newLocation, truckLoad, soldiers, newSteps);
 		case "right":
 			newLocation = Location.getNewLocation(location, "right");
-			if (!Location.locationInBounds(newLocation, n, m))
+			if (!Location.locationInBounds(newLocation, n, m)) {
+				newSteps--;
 				newLocation = Location.getNewLocation(newLocation, "left");
-			return new MIState(newLocation, truckLoad, soldiers);
+			}
+			return new MIState(newLocation, truckLoad, soldiers, newSteps);
 		case "drop":
 			return stateAfterDrop(miState);
 		default:
@@ -102,7 +117,7 @@ public class MissionImpossible extends Problem {
 		}
 	}
 
-	public int pathCost(Node node) {
+	public int pathCostIncremental(Node node) {
 		MIState state = (MIState) node.getState();
 		SoldiersMap soldiersMap = state.getSoldiers();
 
@@ -132,6 +147,29 @@ public class MissionImpossible extends Problem {
 		return remainingSoldiers * 2 + justDied * 10000 + damageBeforeDeath;
 	}
 
+	public int pathCost(Node node) {
+		MIState state = (MIState) node.getState();
+		SoldiersMap soldiersMap = state.getSoldiers();
+		int cost = 0;
+		int damageCaused = node.getDepth() * 2;
+		for(int i = 0; i < soldiers.length; i++) {
+			if(soldiersMap.isSoldierRescued(i)) continue;
+			int health = 100 - soldiers[i].getInitalDamage() - damageCaused;
+			if(health % 2 == 0) {
+				if(health >= 0)
+					cost += 2;
+				if(health == 0)
+					cost += 10000;
+			} else if(health % 2 != 0) {
+				if(health > 0)
+					cost += 2;
+				if(health == -1)
+					cost += 10000 + 1;
+			}
+		}
+		return cost;
+	}
+	
 	public int h1(Node node) {
 		MIState state = (MIState) node.getState();
 		SoldiersMap solidersMap = state.getSoldiers();

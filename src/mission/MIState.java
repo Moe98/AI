@@ -8,12 +8,14 @@ public class MIState extends State {
 	private Location location;
 	private int truckLoad;
 	private SoldiersMap soldiersMap;
+	private int steps;
 
-	public MIState(Location location, int truckLoad, SoldiersMap soldiersMap) {
+	public MIState(Location location, int truckLoad, SoldiersMap soldiersMap, int steps) {
 		super();
 		this.location = location;
 		this.truckLoad = truckLoad;
 		this.soldiersMap = soldiersMap;
+		this.steps = steps;
 	}
 
 	public Location getLocation() {
@@ -40,25 +42,34 @@ public class MIState extends State {
 		this.soldiersMap = soldiersMap;
 	}
 
+	public int getSteps() {
+		return steps;
+	}
+
+	public void setSteps(int steps) {
+		this.steps = steps;
+	}
+
 	@Override
 	public int hashCode() {
 		StringBuilder code = new StringBuilder();
 		code.append(location.getX()).append(",").append(location.getY());
 		code.append("#").append(truckLoad);
 		code.append("#").append(soldiersMap.getBitmap());
+		code.append("#").append(steps);
 		return code.toString().hashCode();
 	}
 
 	@Override
 	public boolean equals(Object obj) {
 		return location.equals(((MIState) obj).getLocation()) && truckLoad == ((MIState) obj).getTruckLoad()
-				&& soldiersMap.equals(((MIState) obj).getSoldiers());
+				&& soldiersMap.equals(((MIState) obj).getSoldiers()) && steps == ((MIState) obj).steps;
 	}
 
 	@Override
 	public String toString() {
 		return "MIState [location=" + location + ", truckLoad=" + truckLoad + ", soldiersMap=" + soldiersMap.toString()
-				+ "]";
+				+ ", steps=" + steps + "]";
 	}
 
 }

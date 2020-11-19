@@ -44,8 +44,6 @@ public class GeneralSearch {
 		ArrayList<Node> expandedNodes = new ArrayList<>();
 		for (String operator : problem.getOperators()) {
 			State nextState = (State) problem.transition(currentState, operator);
-			if (nextState.equals(currentState))
-				continue;
 			Node expandedNode = new Node(currNode, nextState, operator, currNode.getDepth() + 1);
 			expandedNode.setPathCost(calculatePathCost(currNode, expandedNode, problem, strategy));
 			expandedNode.setHeuristicCost(calculateHeuristicCost(expandedNode, problem, strategy));
