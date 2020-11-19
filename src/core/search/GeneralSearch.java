@@ -66,9 +66,12 @@ public class GeneralSearch {
 				continue;
 			ArrayList<Node> children = expand(current, problem, strategy);
 			totalExpanded++;
-			for (Node node : children)
-				if (!tree.isVisited(node))
+			for (Node node : children) {
+				if (!tree.isVisited(node)) {
+					tree.markVisited(node);
 					tree.push(node);
+				}
+			}
 		}
 		return null;
 	}

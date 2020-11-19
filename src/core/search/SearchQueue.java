@@ -14,7 +14,6 @@ public class SearchQueue extends SearchTree {
 
 	@Override
 	public void push(Node node) {
-		super.push(node);
 		((LinkedList<Node>) this.tree).push(node);
 	}
 
@@ -26,6 +25,14 @@ public class SearchQueue extends SearchTree {
 	@Override
 	public boolean isEmpty() {
 		return ((LinkedList<Node>) this.tree).isEmpty();
+	}
+	
+	public boolean isVisited(Node node) {
+		return visited.containsKey(node.getState());
+	}
+	
+	public void markVisited(Node node) {
+		visited.put(node.getState(), 0);
 	}
 
 }

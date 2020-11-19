@@ -14,7 +14,6 @@ public class SearchPriorityQueue extends SearchTree {
 
 	@Override
 	public void push(Node node) {
-		super.push(node);
 		((PriorityQueue<Node>) this.tree).add(node);
 	}
 
@@ -27,5 +26,14 @@ public class SearchPriorityQueue extends SearchTree {
 	public boolean isEmpty() {
 		return ((PriorityQueue<Node>) this.tree).isEmpty();
 	}
-
+	
+	public boolean isVisited(Node node) {
+		if(visited.containsKey(node.getState()))
+			return visited.get(node.getState()) <= node.getPathCost();
+		return false;
+	}
+	
+	public void markVisited(Node node) {
+		visited.put(node.getState(), node.getPathCost());
+	}
 }
