@@ -1,5 +1,4 @@
 package usage;
-
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 
@@ -10,13 +9,12 @@ import com.sun.management.OperatingSystemMXBean;
 public class Usage {
 	private MBeanServerConnection mbsc;
 	private OperatingSystemMXBean osMBean;
-	private long nanoBefore;
-	private long nanoAfter;
-	private long cpuBefore;
-	private long cpuAfter;
+	private double nanoBefore;
+	private double nanoAfter;
+	private double cpuBefore;
+	private double cpuAfter;
 	private long memoryBeforeUsage;
 	private long memoryAfterUsage;
-	private long totalMemory;
 
 	public Usage() throws IOException {
 		mbsc = ManagementFactory.getPlatformMBeanServer();
@@ -28,7 +26,6 @@ public class Usage {
 		nanoBefore = System.nanoTime();
 		cpuBefore = osMBean.getProcessCpuTime();
 		memoryBeforeUsage = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
-		totalMemory = Runtime.getRuntime().totalMemory();
 	}
 
 	public void endMeasure() {
@@ -39,15 +36,22 @@ public class Usage {
 
 	public void printResults() {
 		long actualMemoryUsed = memoryAfterUsage - memoryBeforeUsage;
-		double memoryUsage = ((actualMemoryUsed * 1.0) / (totalMemory * 1.0)) * 100;
+		double memoryUsage = ((actualMemoryUsed * 1.0) / (Runtime.getRuntime().totalMemory() * 1.0)) * 100;
 		System.out.println("Memory Usage: " + memoryUsage + "%");
 
-		long cpuUsage;
+		double cpuUsage;
 		if (nanoAfter > nanoBefore)
-			cpuUsage = ((cpuAfter - cpuBefore) * 100L) / (nanoAfter - nanoBefore);
+			cpuUsage = ((cpuAfter-cpuBefore*1.0)/(nanoAfter-nanoBefore));
 		else
 			cpuUsage = 0;
 
 		System.out.println("CPU Usage: " + cpuUsage + "%");
 	}
+
+//	public static void main(String[] args) throws IOException {
+//		Usage usage = new Usage();
+//		usage.startMeasure();
+//		usage.endMeasure();
+//		usage.printResults();
+//	}
 }
