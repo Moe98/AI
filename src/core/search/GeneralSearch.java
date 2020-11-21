@@ -14,26 +14,24 @@ public class GeneralSearch {
 	private static int depthLimit;
 
 	private static int calculatePathCost(Node a, Node b, Problem problem, String strategy) {
-		int g = a.getPathCost() + problem.pathCost(b);
 		switch (strategy) {
-		case "GR1":
-		case "GR2":
-			return 0;
+		case "UC":
+		case "AS1":
+		case "AS2":
+			return a.getPathCost() + problem.pathCost(b);
 		default:
-			return g;
+			return 0;
 		}
 	}
 
 	private static int calculateHeuristicCost(Node node, Problem problem, String strategy) {
-		int h1 = problem.h1(node);
-		int h2 = problem.h2(node);
 		switch (strategy) {
 		case "GR1":
 		case "AS1":
-			return h1;
+			return problem.h1(node);
 		case "AS2":
 		case "GR2":
-			return h2;
+			return problem.h2(node);
 		default:
 			return 0;
 		}

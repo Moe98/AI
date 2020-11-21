@@ -17,7 +17,7 @@ public class MissionImpossible extends Problem {
 	private Location ethanLocation, submarineLocation;
 	private Soldier[] soldiers;
 	private String[] operators;
-	private final int MAX_STEPS = 560;
+	private final int MAX_STEPS = 51;
 
 	public MissionImpossible(String[] operators, State initialState, int n, int m, int c, Location ethanLocation,
 			Location submarineLocation, Soldier[] soldiers) {
@@ -43,11 +43,11 @@ public class MissionImpossible extends Problem {
 		SoldiersMap soldiersMap = state.getSoldiers();
 
 		int steps = state.getSteps();
-		
+
 		SoldiersMap newSoldiers = new SoldiersMap(soldiersMap.getNumOfSoldiers(), soldiersMap.getBitmap());
 		if (location.equals(submarineLocation) && truckLoad > 0) {
 			truckLoad = 0;
-			steps++;
+			steps = Math.min(steps + 1, MAX_STEPS);
 		}
 		return new MIState(Location.getNewLocation(location, "drop"), truckLoad, newSoldiers, steps);
 	}
@@ -64,7 +64,7 @@ public class MissionImpossible extends Problem {
 
 		if (soldierIdx != -1 && truckLoad < c && !soldiersMap.isSoldierRescued(soldierIdx)) {
 			truckLoad++;
-			steps++;
+			steps = Math.min(steps + 1, MAX_STEPS);
 			newSoldiersMap.pickupSoldier(soldierIdx);
 		}
 
@@ -73,13 +73,12 @@ public class MissionImpossible extends Problem {
 
 	public State transition(State state, String operator) {
 		MIState miState = (MIState) state;
-		if(miState.getSteps() >= MAX_STEPS) return state;
 		Location location = miState.getLocation();
 		int truckLoad = miState.getTruckLoad();
 		SoldiersMap soldiers = miState.getSoldiers();
 
 		Location newLocation;
-		int newSteps = miState.getSteps() + 1;
+		int newSteps = Math.min(miState.getSteps() + 1, MAX_STEPS);
 
 		switch (operator) {
 		case "up":
@@ -119,6 +118,8 @@ public class MissionImpossible extends Problem {
 
 	public int pathCostIncremental(Node node) {
 		MIState state = (MIState) node.getState();
+		if (state.getSteps() == MAX_STEPS)
+			return 0;
 		SoldiersMap soldiersMap = state.getSoldiers();
 
 		int remainingSoldiers = 0;
@@ -149,29 +150,34 @@ public class MissionImpossible extends Problem {
 
 	public int pathCost(Node node) {
 		MIState state = (MIState) node.getState();
+		if (state.getSteps() == MAX_STEPS)
+			return 0;
 		SoldiersMap soldiersMap = state.getSoldiers();
 		int cost = 0;
 		int damageCaused = node.getDepth() * 2;
-		for(int i = 0; i < soldiers.length; i++) {
-			if(soldiersMap.isSoldierRescued(i)) continue;
+		for (int i = 0; i < soldiers.length; i++) {
+			if (soldiersMap.isSoldierRescued(i))
+				continue;
 			int health = 100 - soldiers[i].getInitalDamage() - damageCaused;
-			if(health % 2 == 0) {
-				if(health >= 0)
+			if (health % 2 == 0) {
+				if (health >= 0)
 					cost += 2;
-				if(health == 0)
+				if (health == 0)
 					cost += 10000;
-			} else if(health % 2 != 0) {
-				if(health > 0)
+			} else if (health % 2 != 0) {
+				if (health > 0)
 					cost += 2;
-				if(health == -1)
+				if (health == -1)
 					cost += 10000 + 1;
 			}
 		}
 		return cost;
 	}
-	
+
 	public int h1(Node node) {
 		MIState state = (MIState) node.getState();
+		if (state.getSteps() == MAX_STEPS)
+			return 0;
 		SoldiersMap solidersMap = state.getSoldiers();
 		int remainingSoldiers = 0;
 		for (int i = 0; i < soldiers.length; i++) {

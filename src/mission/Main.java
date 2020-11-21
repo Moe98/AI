@@ -7,10 +7,11 @@ import usage.Usage;
 public class Main {
 
 	public static void main(String[] args) {
-//		while (true) {
-//			String grid = MissionImpossible.genGrid();
-//			System.out.println(grid);
-//			String grid = "3,3;0,1;2,1;1,1,1,0,0,2,2,2,0,0,1,2;72,17,40,28,45,9;1";
+		String grid = MissionImpossible.genGrid();
+		System.out.println(grid);
+		
+//		String grid = "2,2;0,0;0,1;1,1,1,0;90,93;1";
+//		String grid = "3,3;0,1;2,1;1,1,1,0,0,2,2,2,0,0,1,2;72,17,40,28,45,9;1";
 //		String grid = "3,3;1,0;2,2;0,0,1,1,2,0;69,51,57;1";
 //		String grid = "13,9;4,6;5,7;3,10,4,4,5,9,6,1,8,8,2,12,7,0;34,39,95,64,3,16,88;1";
 //		String grid = "2,2;0,0;1,1;1,0,0,1;96,1;1";
@@ -31,41 +32,19 @@ public class Main {
 //		String grid = "14,14;13,9;1,13;5,3,9,7,11,10,8,3,10,7,13,6,11,1,5,2;76,30,2,49,63,43,72,1;6";
 //		String grid = "15,15;5,10;14,14;0,0,0,1,0,2,0,3,0,4,0,5,0,6,0,7,0,8;81,13,40,38,52,63,66,36,13;1";
 
-		String grid = "2,2;0,0;0,1;1,1,1,0;90,93;1";
-
-			try {
-				Usage usage = new Usage();
-				usage.startMeasure();
-				String solutionUCS = MissionImpossible.solve(grid, "GR1", false);
-				String solutionAS1 = MissionImpossible.solve(grid, "GR2", false);
-				String solutionAS2 = MissionImpossible.solve(grid, "IDF", false);
-//			System.out.println();
-				String[] damageUC = solutionUCS.split(";");
-				String[] damageAS1 = solutionAS1.split(";");
-				String[] damageAS2 = solutionAS2.split(";");
-				int sum1 = sumOfDamages(damageUC[2]);
-				int sum2 = sumOfDamages(damageAS1[2]);
-				int sum3 = sumOfDamages(damageAS2[2]);
-//				if (sum1 != sum2 || sum1 != sum3) {
-					System.out.println(grid);
-					Visualizer.visualizeSolution(solutionUCS);
-					Visualizer.visualizeSolution(solutionAS1);
-					Visualizer.visualizeSolution(solutionAS2);
-//					break;
-//				}
-				usage.endMeasure();
+		try {
+			Usage usage = new Usage();
+			usage.startMeasure();
+			String solutionUCS = MissionImpossible.solve(grid, "UC", false);
+			String solutionAS1 = MissionImpossible.solve(grid, "AS1", false);
+			String solutionAS2 = MissionImpossible.solve(grid, "AS2", false);
+			Visualizer.visualizeSolution(solutionUCS);
+			Visualizer.visualizeSolution(solutionAS1);
+			Visualizer.visualizeSolution(solutionAS2);
+			usage.endMeasure();
 //			usage.printResults();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-//		}
-	}
-
-	private static int sumOfDamages(String str) {
-		String[] damages = str.split(",");
-		int sum = 0;
-		for (String s : damages)
-			sum += Integer.parseInt(s);
-		return sum;
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }
