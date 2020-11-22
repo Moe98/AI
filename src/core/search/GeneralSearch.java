@@ -81,7 +81,7 @@ public class GeneralSearch {
 				Node goalNode = performSearch(problem, strategy);
 				if (goalNode != null)
 					return goalNode;
-				depthLimit++;
+				depthLimit += 5;
 			}
 		} else {
 			hasDepthLimit = false;
